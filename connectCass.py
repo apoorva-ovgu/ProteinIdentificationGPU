@@ -11,12 +11,11 @@ select_results = session.execute_async("SELECT * FROM sample1")
 print("ID\t\t\t\t\t\t\t\t\t\t\t\t\tExtraction\t\t\t\t\t\t\t\t\t\t\t\t\tType")
 try:
     rows = select_results.result()
-except Exception:
-    print("Leider exception in querying: "+ Exception)
+except Exception as e:
+    print("Leider exception in querying: "+ e.message)
 
 for row in rows:
     print(row)
+print("successful cassandra connection.\n")
 
-
-print("success")
 cluster.shutdown()
