@@ -7,11 +7,10 @@ session = cluster.connect()
 session.set_keyspace('dna')
 
 #session.execute("CREATE TABLE dna.sample2 ( id UUID PRIMARY KEY, dna_width INT, grooves text, gc_content int );")
-future = session.execute_async("SELECT * FROM sample1")
-print("key\tcol1\tcol2")
-print("---\t----\t----")
+select_results = session.execute_async("SELECT * FROM sample1")
+print("ID\t\t\t\t\t\t\t\t\t\t\t\t\tExtraction\t\t\t\t\t\t\t\t\t\t\t\t\tType")
 try:
-    rows = future.result()
+    rows = select_results.result()
 except Exception:
     print("Leider exception in querying: "+ Exception)
 
