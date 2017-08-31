@@ -1,0 +1,26 @@
+Introduction
+Introduction into the topic of the thesis
+Narrowing down the task
+Answers to the questions: Why is the thesis useful? What is the goal of the work?
+Determine and discussion of the starting point
+What relevant methods/techniques are already developed in this research area (literature research)?
+Which conditions (for implementation: hardware and software among others) exist?
+
+Development of a (formal) solution model
+Critical evaluation of the literature: What can be used?
+Starting from the previous item, a concept for solving the task has to be developed
+
+Justification of the solution concept: Comparision to alternatives!
+This section must not include implementation details.
+
+Implementation of the solution concept
+Selection of tools (e.g. programming language)
+
+Documentation of important design decisions
+Critical evaluation of the implementation (test runs with measured run times, case study if possible, gaps in the implementation, useful future addtions,...)
+
+Conclusion
+
+Summary: What are the important results?
+
+Future work: What can/must be done?
