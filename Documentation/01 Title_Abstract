@@ -1,0 +1,4 @@
+Using GPUs for faster Protein Identification
+
+Use case / abstract: 
+Proteins are broken down into smaller parts called peptides, which are nothing but a combination of atoms. They are represented as a spectra (a graph) when passed through a mass spectrometer. The idea is to match a sample with an existing database. The existing database is often a huge one (big data). Hence, to efficiently build a platform to do this, we not only need a huge amount of space, but also enpugh omputing power. This thesis talks about such a setup, implementation and results for the above mentioned purpose.
