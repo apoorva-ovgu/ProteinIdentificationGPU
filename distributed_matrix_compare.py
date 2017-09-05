@@ -11,7 +11,7 @@ arrtranspose = None
 arr2 = None
 
 server = tf.train.Server.create_local_server()
-node1 = str(server.target,'utf-8')
+node1 = str(server.target).encode('utf-8')
 
 
 print("- - - - - - - - - - - - - - - - - - - - - - - - SINGLE- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
