@@ -1,0 +1,22 @@
+Chapter 1. Introduction
+2-4 pages describing the following:
+
+    What is the problem?
+    Why is it interesting and important?
+    Why is it hard? (E.g., why do naive approaches fail?)
+    Why hasn't it been solved before? (Or, what's wrong with previous proposed solutions? How does mine differ?)
+    What are the key components of my approach and results? Also include any specific limitations. 
+    
+1. In our case the problem is that scientific applications nowadays can benefit from both hardware acceleration (usually in the form of High Performance Computing) and big data frameworks, but since the latter have been generally built for clouds but not for hardware acceleration, these applications have to make a choice between both.  In general, this is not a choice that should be made, as Big Data frameworks should be able to exploit the possibilities of modern hardware. Why is this not done? 
+The key problem is that these frameworks are built on very high-level tools (as opposite to low-level C) focusing on scaling out but not on exploiting to the optimal the use of GPUs and other hardware accelerators (which is the focus of HPC). (It would be nice to research a bit on the distinction between two fields). 
+This situation is problematic for both fields: HPC (which generally is what scientific applications choose) and Big Data frameworks. If an application chooses the second, it might fail to exploit the possibilties of modern hardware, leading to underutilization and higher runtimes) (You need to find sources on this). If an application chooses the second, it might miss on the nice software features of big data processing frameworks (i.e., reliability, abstractions for parallel processing, ease of programming, ease of integration with other tools...).
+
+2. It is an important problem mainly because of how timely it is: big data processing frameworks are relevant for almost every field of science nowadays. There is a clear need of bridging the gap between HPC and big data processing technologies, to benefit scientific applications. It is also an interesting problem because it implies bringing a rigurous hardware-centric analysis into big data processing frameworks, leading to fine-tuned optimizations for HPC processing.
+
+3. It is a difficult problem because scientific applications are usually complex in and of themselves, with existing implementations being written with tools that are very tuned to specialized hardware or HPC frameworks. This makes them difficult to port to big data technologies, which are more high level and less hardware focused.
+
+4. The problem has not been tackled before because hardware acceleration for big data technologies is a relatively new possibility... (It would also be good to point out what things have been done and how your approach is different...)
+
+5. In this Thesis we provide a comprehensive review on the state of affairs regarding hardware acceleration for big data processing frameworks. In order to offer technical insights we select a specific use case (Protein Identification). Based on our consideration of the requirements, we selected a specific technology stack and we proposed an architecture ... A key contribution of our work is the implementation in a harware-accelerated big data technology of the X!Tandem algorithm for similarity scoring. We furthermore evalaute our implementation on real world data, finding speedups of X and Y, w.r.t. an implementation without hardware acceleration.
+
+TENTATIVELY: We conclude with an evaluation of the gap between a hand-tuned CUDA implementation and the TensorFlow implementation, showing the tuning potential that these big data frameworks can still exploit.
