@@ -10,4 +10,6 @@ Steps followed on ubuntu:
 6. Run the python file
 
 Steps followed on windows (cygwin):
-1. cd "C:\thesis\cassandra" and then bin\cassandra.bat
+1. cd "C:\thesis\cassandra"  and then bin/cassandra.bat
+2. cd "C:\thesis\kafka"      and then bin/zookeeper-server-start.sh config/zookeeper.properties
+3. cd "C:\thesis\kafka"      and then bin/kafka-server-start.sh config/server.properties
