@@ -1,6 +1,4 @@
 from cassandra.cluster import Cluster
-from cassandra.query import SimpleStatement
-from cassandra import ConsistencyLevel
 import os
 import uuid
 
@@ -42,7 +40,7 @@ fasta_location = os.path.join(os.path.dirname(__file__), 'datafiles')
 for file in os.listdir(fasta_location):
     if file.endswith(".fasta"):
         for line in open(fasta_location + "/" + file, 'U'):
-            line.rstrip('\n')
+            line = line.rstrip('\n')
             if len(line) > 0 and line[0] == '>':
                 if sequence is not None:
                     separated_proteins.append([header, sequence])
