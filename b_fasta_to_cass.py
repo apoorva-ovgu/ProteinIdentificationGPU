@@ -2,7 +2,6 @@ from cassandra.cluster import Cluster
 import os
 import uuid
 
-
 protein_id = None
 protein_desc = None
 protein_seq = None
@@ -15,6 +14,7 @@ sequence = None
 
 
 def filldb(protein_desc, protein_seq):
+    ### uuid1: Generate a UUID from a host ID, sequence number, and the current time. ###
     session.execute(
         """INSERT INTO xtandem.protein (id, description, sequence)
         VALUES (%s, %s, %s)""",
@@ -34,7 +34,8 @@ def table_contents(table_name):
 cluster = Cluster(['127.0.0.1'])
 session = cluster.connect()
 session.set_keyspace('xtandem')
-
+### initial cleanup ###
+#session.execute("""TRUNCATE table xtandem.protein; """ )
 
 fasta_location = os.path.join(os.path.dirname(__file__), 'datafiles')
 for file in os.listdir(fasta_location):
@@ -50,8 +51,6 @@ for file in os.listdir(fasta_location):
                 header = line
             else:
                 sequence += line
-
-
 
 table_contents("xtandem.protein")
 

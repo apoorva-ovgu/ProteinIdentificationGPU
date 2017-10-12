@@ -1,7 +1,5 @@
 import uuid
 from cassandra.cluster import Cluster
-from cassandra.query import SimpleStatement
-from cassandra import ConsistencyLevel
 from kafka import KafkaConsumer
 
 cluster = Cluster(['127.0.0.1'])
@@ -15,20 +13,14 @@ def storeScores(esid, tsid,score):
         (uuid.uuid1(), esid, tsid,score)
     )
 
-def collect(spectrumline,pos):
-    print "Received",spectrumline.value
+def collect(spectrumline):
+    print ("Received",spectrumline.value)
 
 try:
-    consumer = KafkaConsumer('xtandemtest',bootstrap_servers=['localhost:9092'])
+    consumer = KafkaConsumer('scores',bootstrap_servers=['localhost:9092'])
     for msg in consumer:
-        if "BEGIN IONS" in str(msg.value):
-            collect(msg,"start")
-        elif "END IONS" in str(msg.value):
-            collect(msg,"end")
-        else:
-            if str(msg.value).lstrip() is not "":
-                collect(msg,"contents")
-
-    #KafkaConsumer(consumer_timeout_ms=1000)
+        collect(msg)
 except Exception as e:
-    print("Leider exception in Kafka consumer: "+ e.message)
+    print("Exception in Kafka consumer in scoreCollector: "+ e.message)
+finally:
+    KafkaConsumer.close()
