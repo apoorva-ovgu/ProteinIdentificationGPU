@@ -1,6 +1,8 @@
 import uuid
 from cassandra.cluster import Cluster
 from kafka import KafkaConsumer
+from kafka import KafkaProducer
+
 
 cluster = Cluster(['127.0.0.1'])
 session = cluster.connect()
@@ -24,3 +26,7 @@ except Exception as e:
     print("Exception in Kafka consumer in scoreCollector: "+ e.message)
 finally:
     KafkaConsumer.close()
+
+def sendResults(valueToSend):
+    producer = KafkaProducer(bootstrap_servers=['localhost: 9092'])
+    producer.send("results", valueToSend)
