@@ -1,29 +1,35 @@
 import uuid
-import json
+import re
 import os
 from kafka import KafkaProducer
 
 mgf_location = os.path.join(os.path.dirname(__file__), 'datafiles')
 mgfSpectrumIDs = []
+fullSpectra_s = ""
+p = re.compile('\d+.\d+\t\d+\t\d\+')
+
 
 try:
     producer = KafkaProducer(bootstrap_servers=['localhost: 9092'])
 
     for file in os.listdir(mgf_location):
         if file.endswith(".mgx"):
-            ### opening with 'U' translates all conventions of newline to a "\n"
             for line in open(mgf_location + "/" + file, 'U'):
-                line = line.rstrip('\n').encode('utf-8')
+                line = line.rstrip('\n')
+                m = p.match(line)
+
                 if line.lstrip() is not "":
-
-                    ### CREATE UUID for every new spectra
                     if "BEGIN IONS" in line:
-                        generatedID = uuid.uuid1()
+                        generatedID = str(uuid.uuid1())+"endMGFID"
                         mgfSpectrumIDs.append(generatedID)
-                        line += "\tMGFID="+ str(generatedID)
-                    producer.send("UIDSandMGF",line)
-                    print("sent "+line)
+                        fullSpectra_s+=generatedID
 
-    producer.send("UIDSandMGF", "=all_end")
+                    elif "END IONS" in line:
+                        producer.send("UIDSandMGF", fullSpectra_s.encode('utf-8'))
+                        print("sent Spectra:" + fullSpectra_s)
+                        fullSpectra_s = ""
+
+                    elif m is not None:
+                        fullSpectra_s+=line+"%%%"
 except Exception as e:
-    print("Leider exception in Kafka producer: "+ e.message)
+    print("Leider exception in Kafka producer: "+ str(e))
