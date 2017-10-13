@@ -1,16 +1,16 @@
 import uuid
 import re
 import itertools
+import datetime
 
 from cassandra.cluster import Cluster
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
+from kafka import SimpleClient
 
 flag_compareAll = True
 flag_dummyScore = True
-mgfSpectrumIDs = []
 fastaSpectrumIDs = []
-pairs = []
 
 p = re.compile('\d+.\d+\t\d+\t\d\+')
 mgf_id = "Not Set"
@@ -19,22 +19,24 @@ cluster = Cluster(['127.0.0.1'])
 session = cluster.connect()
 session.set_keyspace('xtandem')
 
+
 def filldb(mgf_id, protein_uid, sequence):
     session.execute(
-        """INSERT INTO xtandem.peptide (id, protein_uid, sequence)
+        """INSERT INTO xtandem.peptide (id, protein_uid, sequence) 
         VALUES (%s, %s, %s)""",
         (mgf_id, protein_uid, sequence)
     )
 
+
 def table_contents(toselect, table_name):
     tempArray = []
 
-    query = "SELECT "+toselect+" FROM "+table_name+";"
+    query = "SELECT " + toselect + " FROM " + table_name + ";"
     select_results = session.execute(query)
 
     if "*" not in toselect:
         for row in select_results:
-            stringRes = str(eval("row."+toselect))
+            stringRes = str(eval("row." + toselect))
             tempArray.append(stringRes)
     else:
         for row in select_results:
@@ -42,12 +44,18 @@ def table_contents(toselect, table_name):
 
     return tempArray
 
-def createPairs():
+
+def createPairs(id):
+    mgfSpectrumIDs = []
+    mgfSpectrumIDs.append(id)
+    pairs = []
     if flag_compareAll is True:
         for element in itertools.product(mgfSpectrumIDs, fastaSpectrumIDs):
             pairs.append(element)
+    return pairs
 
-def sendPairs():
+
+def sendPairs(pairs, time):
     try:
         producer = KafkaProducer(bootstrap_servers=['localhost: 9092'])
         loadBalancer = 2
@@ -56,48 +64,40 @@ def sendPairs():
                 loadBalancer = 1
             else:
                 loadBalancer = 2
-            couple = couple + (loadBalancer,)
+            couple = couple + (loadBalancer,) + (time,)
             producer.send("pairs", str(couple).encode('utf-8'))
-            print("Sent ",couple)
+            print("Sent ", couple)
     except Exception as e:
         print("Exception in Kafka producer in pairbuilder: " + e.message)
 
-def readFromMgfProducer():
-    try:
-        session.execute("""TRUNCATE table xtandem.peptide  """)
-        consumer = KafkaConsumer('UIDSandMGF',bootstrap_servers=['localhost:9092'], consumer_timeout_ms=5000)
-        for msg in consumer:
-            receivedLine = msg.value.decode("utf-8")
-            m = p.match(receivedLine)
 
-            if "BEGIN IONS" in receivedLine:
-                mgf_id = receivedLine.split("MGFID=")[1]
-                mgf_id = mgf_id.lstrip()
-                mgfSpectrumIDs.append(mgf_id)
+def readFromMgfProducer(msg):
+    receivedLine = msg.value.decode("utf-8")
+    receivedSpectrum = receivedLine.split("endMGFID")
+    print("Received spectrum for ID ",receivedSpectrum[0])
+    filldb(uuid.uuid1(),uuid.UUID('{'+receivedSpectrum[0]+'}'),receivedSpectrum[1])
+    return receivedSpectrum[0]
 
-
-            elif "END IONS" in receivedLine:
-                mgf_id = "Not Set"
-
-            elif "=all_end" in receivedLine:
-                print("Last spectrum line received!")
-
-            elif m is not None :
-                filldb(uuid.uuid1(),uuid.UUID('{'+mgf_id+'}'),receivedLine)
-
-    except Exception as e:
-        print("Exception in Kafka consumer: "+ str(e))
-    finally:
-        KafkaConsumer.close(consumer, True)
-        #print("Rows entered in table peptide:")
-        #table_contents("*","xtandem.peptide")
 
 def readFromFastaDB():
-    resultsFromCass = table_contents("id","xtandem.protein")
+    resultsFromCass = table_contents("id", "xtandem.protein")
     for eachID in resultsFromCass:
         fastaSpectrumIDs.append(eachID)
 
-readFromMgfProducer()
-readFromFastaDB()
-createPairs()
-sendPairs()
+consumer = KafkaConsumer('UIDSandMGF', bootstrap_servers=['localhost:9092'],group_id='apoorva-thesis')
+try:
+    session.execute("""TRUNCATE table xtandem.peptide  """)
+    readFromFastaDB()
+    print("Consumer is ready to listen!")
+    for msg in consumer:
+        a = datetime.datetime.now()
+        id = readFromMgfProducer(msg)
+        pairs = createPairs(id)
+        b = datetime.datetime.now()
+        sendPairs(pairs, b - a)  ### timedelta:  (days, seconds and microseconds)
+except Exception as e:
+    print("Exception in Kafka consumer: " + str(e))
+finally:
+    # print("Rows entered in table peptide:")
+    # table_contents("*","xtandem.peptide")
+    KafkaConsumer.close(consumer)
