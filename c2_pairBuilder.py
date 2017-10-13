@@ -9,13 +9,14 @@ from kafka import KafkaProducer
 from kafka import SimpleClient
 
 flag_compareAll = True
-flag_dummyScore = True
 fastaSpectrumIDs = []
 
 p = re.compile('\d+.\d+\t\d+\t\d\+')
 mgf_id = "Not Set"
 
+#windows
 cluster = Cluster(['127.0.0.1'])
+#cluster = Cluster(['192.168.145.21'])
 session = cluster.connect()
 session.set_keyspace('xtandem')
 
@@ -52,11 +53,13 @@ def createPairs(id):
     if flag_compareAll is True:
         for element in itertools.product(mgfSpectrumIDs, fastaSpectrumIDs):
             pairs.append(element)
+
     return pairs
 
 
 def sendPairs(pairs, time):
     try:
+
         producer = KafkaProducer(bootstrap_servers=['localhost: 9092'])
         loadBalancer = 2
         for couple in pairs:
@@ -65,7 +68,10 @@ def sendPairs(pairs, time):
             else:
                 loadBalancer = 2
             couple = couple + (loadBalancer,) + (time,)
+
             producer.send("pairs", str(couple).encode('utf-8'))
+
+
             print("Sent ", couple)
     except Exception as e:
         print("Exception in Kafka producer in pairbuilder: " + e.message)

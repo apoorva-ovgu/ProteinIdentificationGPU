@@ -30,6 +30,6 @@ try:
                         fullSpectra_s = ""
 
                     elif m is not None:
-                        fullSpectra_s+=line+"%%%"
+                        fullSpectra_s+=line+"\n"
 except Exception as e:
     print("Leider exception in Kafka producer: "+ str(e))
