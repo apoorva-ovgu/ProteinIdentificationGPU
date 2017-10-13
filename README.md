@@ -1,6 +1,7 @@
 # ProteinIdentificationGPU
 Identification of proteins in DNA accelerated and executed on GPUs
 PS: auto.create.topics.enable=true in congif/server.properties
+PS2: Works and then does not anymore:::> set a small log offset "log.retention.bytes=1000" in config/Server.properties
 
 Steps followed on ubuntu:
 1. Started cassandra on localhost: Cassandra.bat and run the cql (connectCass.py) once.
