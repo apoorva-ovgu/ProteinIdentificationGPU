@@ -30,7 +30,11 @@ def collect(scoreLine):
         if mgfDict[receivedScoreFor[0]] is not None:
             mgfDict[receivedScoreFor[0]] = int(mgfDict[receivedScoreFor[0]])-1
             mgfClassObj = \
-                mgfClass(receivedScoreFor[0],receivedScoreFor[1],receivedScore,mgfDict[receivedScoreFor[0]])
+                mgfClass(receivedScoreFor[0] #name
+                         ,receivedScoreFor[1] #matchedWith
+                         ,receivedScore,mgfDict[receivedScoreFor[0]] #score
+                         ,receivedScoreFor[2] #timeRequired
+                         )
             mgfClassInstances.append(mgfClassObj)
 
             if int(mgfDict[receivedScoreFor[0]]) == 0:
@@ -39,6 +43,10 @@ def collect(scoreLine):
         print "Key does not exist....STALE  DATA"
 
 def sortScores(mgfid):
+    producer_d4 = KafkaProducer(bootstrap_servers=['localhost: 9092'])
+    producer_d4.send("results"
+                     , value=b'code by apoorva patrikar'
+                     , key=b'__init__')
     tmpArr = []
     print "All results collected for ", mgfid, "\nSorting order is "
 
@@ -50,7 +58,13 @@ def sortScores(mgfid):
 
     for eachItem in processingObjArr:
         mgfClassInstances.remove(eachItem)
-        print " ...matched with=",eachItem.match," ...with a score of=",eachItem.score
+        toPrint = " ...matched with="+eachItem.match\
+                  +" ...with a score of="+eachItem.score\
+                  +" ...and computing time="+eachItem.timeReqd
+
+        print toPrint
+
+        sendResults(producer_d4, mgfid, toPrint)
 
 def getScores():
     consumer_scores = KafkaConsumer('scores'
@@ -75,9 +89,10 @@ def getuidMetadata():
         print("Exception in Kafka consumer in uidMatches Collector: "+ e.message)
 
 
-def sendResults(valueToSend):
-    producer = KafkaProducer(bootstrap_servers=['localhost: 9092'])
-    producer.send("results", valueToSend)
+def sendResults(producer_d4, keyToSend, valueToSend):
+    producer_d4.send("results"
+                  ,value = valueToSend.encode('utf-8')
+                  , key = keyToSend.encode('utf-8'))
 
 #getuidMetadata()
 #getScores()  ab01d38a-b1a5-11e7-82f8-b8ac6fa02cf9

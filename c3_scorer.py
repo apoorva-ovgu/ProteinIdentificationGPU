@@ -2,6 +2,8 @@ from cassandra.cluster import Cluster
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
 import tensorflow as tf
+from datetime import timedelta, datetime as dt
+
 
 import os
 import re
@@ -53,6 +55,7 @@ def setVariables():
             return f
 
 def readFromPairBuilder():
+    #mgfID, fastaID, load, time in ms
 
     consumer_c3 = KafkaConsumer('pairs'
                                 , bootstrap_servers=['localhost:9092']
@@ -62,8 +65,10 @@ def readFromPairBuilder():
         if "__init__" not in msg.key:
             pairdata = eval(str(msg.value))
             print "Received Pair: " ,pairdata
+            preTime = dt.now()
             currScore = setVariables()
-            sendScores(pairdata[0], pairdata[1], currScore)
+            postTime = dt.now()
+            sendScores(pairdata[0], pairdata[1], currScore, pairdata[3]+timedelta.total_seconds(postTime-preTime))
 
 def calculateScore():
     lcount = 0
@@ -86,10 +91,10 @@ def calculateScore():
 
     return fscore
 
-def sendScores(mgfid, fastaid, currScore):
+def sendScores(mgfid, fastaid, currScore, timeReqd):
     producer_c3 = KafkaProducer(bootstrap_servers=['localhost: 9092'])
     producer_c3.flush()
-    formedKey = mgfid+"#"+fastaid
+    formedKey = mgfid+"#"+fastaid+"#"+str(timeReqd)
     formedKey = str(formedKey.encode('utf-8'))
 
     try:
@@ -100,6 +105,7 @@ def sendScores(mgfid, fastaid, currScore):
         print("Exception in Kafka producer in score sending: " + e.message)
     finally:
         producer_c3.close()
+
 
 readFromPairBuilder()
 

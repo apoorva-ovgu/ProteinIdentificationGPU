@@ -1,10 +1,15 @@
 from kafka import KafkaConsumer
 
 try:
-    consumer = KafkaConsumer('results',bootstrap_servers=['localhost:9092'])
-    for msg in consumer:
-        print(msg)
+    consumer = KafkaConsumer('results'
+                             ,bootstrap_servers=['localhost:9092']
+                             , group_id='apoorva-thesis')
 except Exception as e:
-    print("Exception in Kafka consumer in scoreCollector: "+ e.message)
+    print("Exception in Kafka consumer in scoreCollector: " + e.message)
 finally:
-    KafkaConsumer.close()
+    print "Listening to all results!"
+
+for msg in consumer:
+        print("Result for ",msg.key," is: ",msg.value)
+
+
