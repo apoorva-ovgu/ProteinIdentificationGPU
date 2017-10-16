@@ -3,36 +3,29 @@ import re
 import itertools
 from datetime import timedelta, datetime as dt
 
-from cassandra.cluster import Cluster
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
+from dbOperations import connectToDB
 
 flag_compareAll = True
 fastaSpectrumIDs = []
 mgf_id = "Not Set"
 
 
-def connectToDB():
-    cluster = Cluster(['127.0.0.1'])
-    session = cluster.connect()
-    session.set_keyspace('xtandem')
-    return session
-
-def filldb(mgf_id, protein_uid, sequence):
+def filldb(mgf_id, mgf_metadata, mgf_sequence):
     session = connectToDB()
-    session.execute(
-        """INSERT INTO xtandem.peptide (id, protein_uid, sequence) 
+    session.execute("""INSERT INTO xtandem.exp_spectrum (id, metadata, data) 
         VALUES (%s, %s, %s)""",
-        (mgf_id, protein_uid, sequence)
+        (mgf_id,  mgf_metadata, mgf_sequence)
     )
     session.shutdown()
 
 def table_contents(toselect, table_name):
-    session = connectToDB()
+    cass_session = connectToDB()
     tempArray = []
 
     query = "SELECT " + toselect + " FROM " + table_name + ";"
-    select_results = session.execute(query)
+    select_results = cass_session.execute(query)
 
     if "*" not in toselect:
         for row in select_results:
@@ -41,7 +34,8 @@ def table_contents(toselect, table_name):
     else:
         for row in select_results:
             tempArray.append(row)
-    session.shutdown()
+    cass_session.shutdown()
+
     return tempArray
 
 def createPairs(createForId):
@@ -93,13 +87,9 @@ def sendPairs(pairsCreated, time):
     producer_c2.close()
 
 def storeMGF(mgfid, mgfContent):
-    #receivedLine = msgContent.decode("utf-8")
-    #receivedSpectrum = receivedLine.split("endMGFID")
-    #print("Received spectrum for ID ",receivedSpectrum[0])
-    #filldb(uuid.uuid1(),uuid.UUID('{'+receivedSpectrum[0]+'}'),receivedSpectrum[1])
-    #return receivedSpectrum[0]
     print("Received spectrum for ID ", mgfid)
-    filldb(uuid.uuid1(), uuid.UUID('{' + mgfid + '}'), mgfContent)
+    tmpArr = mgfContent.split("#")    #0:data 1:metadata
+    filldb(uuid.UUID('{' + mgfid + '}'), tmpArr[1], tmpArr[0])
 
 def readFromFastaDB():
     resultsFromCass = table_contents("id", "xtandem.protein")
@@ -112,7 +102,7 @@ def run_step2():
                                 , group_id='apoorva-thesis')
                                 #, auto_offset_reset='earliest')
     session = connectToDB()
-    session.execute("""TRUNCATE table xtandem.peptide  """)
+    session.execute("""TRUNCATE table xtandem.exp_spectrum  """)
     session.shutdown()
 
     readFromFastaDB()
@@ -125,6 +115,7 @@ def run_step2():
             pairsCreated = createPairs(message.key)
             postTime = dt.now()
             sendPairs(pairsCreated, timedelta.total_seconds(postTime-preTime))  ### timedelta:  (days, seconds and microseconds)
+
 
 
 run_step2()

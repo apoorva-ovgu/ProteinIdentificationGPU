@@ -10,6 +10,7 @@ finally:
     print "Listening to all results!"
 
 for msg in consumer:
-        print("Result for ",msg.key," is: ",msg.value)
+    if "__init__" not in msg:
+        print "Result for ",msg.key," is: ",msg.value
 
 

@@ -1,12 +1,12 @@
-from cassandra.cluster import Cluster
 from kafka import KafkaProducer
 from kafka import KafkaConsumer
-import tensorflow as tf
 from datetime import timedelta, datetime as dt
-
+from dbOperations import connectToDB
 
 import os
 import re
+import itertools
+import tensorflow as tf
 
 vector_location = os.path.join(os.path.dirname(__file__), 'datafiles')
 receivedPairs = []
@@ -17,75 +17,114 @@ m_lM = []
 m_fI = []
 m_plSeq = []
 m_pfSeq = []
+vector1 = []
+vector2 = []
+allMatchesToCompute = []
 
-def setVariables():
+def loadFakeData():
+    global allMatchesToCompute
+    global vector1
+    global vector2
+
+    allv1 = ""
+    allv2 = ""
+
+
+    vector1_location = os.path.join(os.path.dirname(__file__), 'datafiles/v1.txt')
+    vector2_location = os.path.join(os.path.dirname(__file__), 'datafiles/v2.txt')
+
+    with open(vector1_location, 'r') as content_file:
+        allv1 = content_file.read().lstrip()
+    with open(vector2_location, 'r') as content_file:
+        allv2 = content_file.read().lstrip()
+
+    vector1 = re.split("v1= \(\d+\)\n", allv1)
+    vector2 = re.split("v2= \(\d+\)\n", allv2)
+
+    for cpair in itertools.product(vector1, vector2):
+        if cpair[0] == "" or cpair[1] == "":
+            pass
+        else:
+            allMatchesToCompute.append(cpair)
+
+def setVariables(pairdata, itercount):
+    global m_lM
+    global m_fI
+    global m_plSeq
+    global m_pfSeq
+
+
     del m_lM[:]
     del m_fI[:]
     del m_plSeq[:]
     del m_pfSeq[:]
 
-    if flag_dummyScore is True:
-        vector1 = []
-        vector2 = []
-        for file in os.listdir(vector_location):
-         if file.endswith(".vector"):
-            with open(vector_location + "/" + file, 'r') as content_file:
-                bothv = content_file.read().lstrip()
-            vectors = re.split(' *v\d+= *', bothv)
-            for v in vectors:
-                if v.lstrip() is not "":
+    f = 0.0
+    v1 = allMatchesToCompute[itercount][0]
+    v2 = allMatchesToCompute[itercount][1]
+    elements1 = v1.split("\n")
+    elements2 = v2.split("\n")
 
-                    if len(vector1) > 0:
-                        vector2 = v.lstrip().split('\n')
-                    else:
-                        vector1 = v.lstrip().split('\n')
-            for line in vector1:
-                if line.lstrip() is not "":
-                    vectorValues = line.split("\t")
-                    m_lM.append(float(vectorValues[0]))
-                    m_fI.append(float(vectorValues[1]))
+    for elements in elements1:
+        if elements.lstrip()!="":
+            frag = elements.split("\t")
+            m_lM.append(float(frag[0]))
+            m_plSeq.append(float(frag[1]))
 
-            for line in vector2:
-                if line.lstrip() is not "":
-                    vectorValues = line.split("\t")
-                    m_plSeq.append(float(vectorValues[0]))
-                    m_pfSeq.append(float(vectorValues[1]))
+    for elements in elements2:
+        if elements.lstrip()!="":
+            frag = elements.split("\t")
+            m_fI.append(float(frag[0]))
+            m_pfSeq.append(float(frag[1]))
 
-            f = calculateScore()
-            return f
+    try:
+        f = calculateScore()
+        print "Final score of pair ", itercount, " is: ", f
+    except Exception as e:
+         print "Error occured in pair ", itercount, "....Hence skipped\n",
+
+    return f
 
 def readFromPairBuilder():
-    #mgfID, fastaID, load, time in ms
-
     consumer_c3 = KafkaConsumer('pairs'
                                 , bootstrap_servers=['localhost:9092']
                                 , group_id='apoorva-thesis')
     print("Consumer is ready to listen!")
-    for msg in consumer_c3:
+    temp = 0
+    for msg in consumer_c3:  #mgfID, fastaID, load, time in ms
         if "__init__" not in msg.key:
             pairdata = eval(str(msg.value))
             print "Received Pair: " ,pairdata
             preTime = dt.now()
-            currScore = setVariables()
+            currScore = setVariables(pairdata,temp)
+            temp+=1
             postTime = dt.now()
             sendScores(pairdata[0], pairdata[1], currScore, pairdata[3]+timedelta.total_seconds(postTime-preTime))
 
 def calculateScore():
+    global m_lM
+    global m_fI
+    global m_plSeq
+    global m_pfSeq
+
     lcount = 0
     fscore = 0.0
-    ind_v1 = []
-    ind_v2 = []
     dot_v1 = []
     dot_v2 = []
 
-    ind_v1, ind_v2 = [i for i, item in enumerate(m_lM) if item in m_plSeq], [i for i, item in enumerate(m_plSeq) if
-                                                                          item in m_lM]
-    dot_v1, dot_v2 = [item for i, item in enumerate(m_fI) if i in ind_v1], [item for i, item in enumerate(m_pfSeq) if
-                                                                            i in ind_v2]
+    #ind_v1, ind_v2 = [i for i, item in enumerate(m_lM) if item in m_plSeq], [i for i, item in enumerate(m_plSeq) if
+    #                                                                      item in m_lM]
+    #dot_v1, dot_v2 = [item for i, item in enumerate(m_fI) if i in ind_v1], [item for i, item in enumerate(m_pfSeq) if
+    #                                                                        i in ind_v2]
+    for x in m_lM:
+        for y in m_fI:
+            if x == y:
+                dot_v1.append( m_plSeq[m_lM.index(x)])
+                dot_v2.append(m_pfSeq[m_fI.index(x)])
     tfsess = tf.Session()
     dotProducts = tfsess.run(tf.multiply(dot_v1, dot_v2))
 
-    lcount = len(ind_v1)
+    lcount = len(dot_v1)
     for dp in dotProducts:
         fscore += dp
 
@@ -106,6 +145,6 @@ def sendScores(mgfid, fastaid, currScore, timeReqd):
     finally:
         producer_c3.close()
 
-
+loadFakeData()
 readFromPairBuilder()
 
