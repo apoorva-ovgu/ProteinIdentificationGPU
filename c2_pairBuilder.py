@@ -66,20 +66,21 @@ def sendPairs(pairsCreated, time):
     producer_c2.send("UIDSandMGF"
                   , value=b'code by apoorva patrikar'
                   , key=b'__init__')
-    loadBalancer = 2
+    loadBalancer = 0
+
 
     for couple in pairsCreated:
-        if loadBalancer == 2:
-            loadBalancer = 1
-        else:
-            loadBalancer = 2
         couple = couple + (loadBalancer,) + (time,)
         packagedCouple = str(couple).encode('utf-8')
+
+        loadBalancer+=1
+        if (loadBalancer > 7): #This what we change for scaling.
+            loadBalancer=0
         try:
             producer_c2.flush()
-            producer_c2.send("pairs"
-                             ,key = "keyforpair".encode('utf-8')
-                             ,value = packagedCouple)
+            producer_c2.send("pairs"+str(loadBalancer)
+                                ,key = "keyforpair".encode('utf-8')
+                                 ,value = packagedCouple)
         except Exception as e:
             print("Exception in Kafka producer in pairbuilder: " + e.message)
         finally:
@@ -115,7 +116,5 @@ def run_step2():
             pairsCreated = createPairs(message.key)
             postTime = dt.now()
             sendPairs(pairsCreated, timedelta.total_seconds(postTime-preTime))  ### timedelta:  (days, seconds and microseconds)
-
-
 
 run_step2()

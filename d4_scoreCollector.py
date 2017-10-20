@@ -5,7 +5,7 @@ from kafka import KafkaProducer
 from mgfClassFile import mgfClass
 import threading
 from threading import Thread
-
+from datetime import timedelta, datetime as dt
 
 cluster = Cluster(['127.0.0.1'])
 session = cluster.connect()
@@ -14,6 +14,7 @@ session.set_keyspace('xtandem')
 mgfClassInstances = []
 mgfDict = {}
 receivedMatches = 0
+timeDict = {}
 
 def storeScores(esid, tsid,score):
     session.execute(
@@ -44,6 +45,10 @@ def collect(scoreLine):
 
             if int(mgfDict[receivedScoreFor[0]]) == 0:
                 sortScores(receivedScoreFor[0])
+                a = dt.now()
+                b =timeDict[receivedScoreFor[0]]
+                c = timedelta.total_seconds(a - b)
+                print(receivedScoreFor[0]+" time from collector "+ str(c))
     except KeyError:
         print "Key does not exist....STALE  DATA"
 
@@ -89,6 +94,7 @@ def getuidMetadata():
             if "__final__" not in msg.key:
                 print "%s has %s matches!" % (msg.key,msg.value)
                 mgfDict[msg.key] = msg.value
+                timeDict[msg.key] =  dt.now()
     except Exception as e:
         print("Exception in Kafka consumer in uidMatches Collector: "+ e.message)
 
