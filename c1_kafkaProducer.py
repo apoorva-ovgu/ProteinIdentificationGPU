@@ -6,9 +6,10 @@ from kafka import KafkaProducer
 mgf_location = os.path.join(os.path.dirname(__file__), 'datafiles')
 mgfSpectrumIDs = []
 fullSpectra_s = ""
-p = re.compile('\d+.\d+\t\d+\t\d\+')
+p = re.compile('(\d+.\d+)\t(\d+)\t(\d\+)')
 generatedID = ""
 metaData = ""
+mz_threshold = 150
 
 producer = KafkaProducer(bootstrap_servers=['localhost: 9092'])
 producer.send("UIDSandMGF"
@@ -17,10 +18,10 @@ producer.send("UIDSandMGF"
 
 for file in os.listdir(mgf_location):
         if file.endswith(".mgx"):
+            highest_intensity = 0
             for line in open(mgf_location + "/" + file, 'U'):
                 line = line.rstrip('\n')
                 m = p.match(line)
-
 
                 if line.lstrip() is not "":
                     if "BEGIN IONS" in line:
@@ -28,6 +29,7 @@ for file in os.listdir(mgf_location):
 
                     elif "END IONS" in line:
                         try:
+                            generatedID+="#"+str(highest_intensity)
                             fullSpectra_s+="#"+metaData
                             producer.send("UIDSandMGF"
                                           , value = fullSpectra_s.encode('utf-8')
@@ -39,7 +41,10 @@ for file in os.listdir(mgf_location):
                         metaData = ""
 
                     elif m is not None:
-                        fullSpectra_s+=line+"\n"
+                        if int(float(m.group(1)) > mz_threshold):
+                            fullSpectra_s+=line+"\n"
+                            if int(float(m.group(2)))>highest_intensity:
+                                highest_intensity = int(float(m.group(2)))
                     else:
                         metaData+=line+"\n"
 producer.flush()

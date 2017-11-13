@@ -39,6 +39,7 @@ def table_contents(toselect, table_name):
     return tempArray
 
 def createPairs(createForId):
+    #print "Creating pairs for ",createForId
     pairs_arr = []
     if flag_compareAll is True:
 
@@ -90,12 +91,37 @@ def sendPairs(pairsCreated, time):
 def storeMGF(mgfid, mgfContent):
     print("Received spectrum for ID ", mgfid)
     tmpArr = mgfContent.split("#")    #0:data 1:metadata
-    filldb(uuid.UUID('{' + mgfid + '}'), tmpArr[1], tmpArr[0])
+    try:
+        filldb(uuid.UUID('{' + mgfid + '}'), tmpArr[1], tmpArr[0])
+    except Exception as e:
+        print("Error filling exp_spectrum: " + str(e))
+
 
 def readFromFastaDB():
     resultsFromCass = table_contents("id", "xtandem.protein")
     for eachID in resultsFromCass:
         fastaSpectrumIDs.append(eachID)
+
+def postProcessMgf(message):
+    currMgfSpectra = ""
+    fullMGFkey = message.key.split("#")
+    highestIntensity = int(fullMGFkey[1])
+
+    mgf1 = message.value.split("\n")
+    p = re.compile('(\d+.\d+)\t(\d+)\t(\d\+)')
+
+    for eachMGFrow in mgf1:
+        m = p.match(eachMGFrow)
+        if m is not None:
+            processedLine = str(m.group(1)) + "\t"
+            oldIntensity = int(float(m.group(2)))
+            newIntensity = oldIntensity / highestIntensity * 100
+            processedLine += str(newIntensity) + "\t" + str(m.group(3))
+            currMgfSpectra += processedLine + "\n"
+        else:
+            currMgfSpectra += eachMGFrow + "\n"
+    #print "Postprocessed MGF= ", currMgfSpectra
+    return currMgfSpectra
 
 def run_step2():
     consumer_c2 = KafkaConsumer('UIDSandMGF',
@@ -111,9 +137,11 @@ def run_step2():
     print("Consumer is ready to listen!")#,consumer_c2.poll())
     for message in consumer_c2:
         if "__init__" not in message.key:
+            filteredMGFdata = postProcessMgf(message)
+            fullMGFkey = message.key.split("#")
             preTime = dt.now()
-            storeMGF(message.key, message.value)
-            pairsCreated = createPairs(message.key)
+            storeMGF(fullMGFkey[0], filteredMGFdata)
+            pairsCreated = createPairs(fullMGFkey[0])
             postTime = dt.now()
             sendPairs(pairsCreated, timedelta.total_seconds(postTime-preTime))  ### timedelta:  (days, seconds and microseconds)
 
