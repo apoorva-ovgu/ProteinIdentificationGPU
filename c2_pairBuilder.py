@@ -113,11 +113,18 @@ def postProcessMgf(message):
     for eachMGFrow in mgf1:
         m = p.match(eachMGFrow)
         if m is not None:
-            processedLine = str(m.group(1)) + "\t"
+            newMZ = round(float(m.group(1)) / 0.4)
+            processedLine = str(newMZ) + "\t"
             oldIntensity = int(float(m.group(2)))
             newIntensity = oldIntensity / highestIntensity * 100
-            processedLine += str(newIntensity) + "\t" + str(m.group(3))
-            currMgfSpectra += processedLine + "\n"
+            processedLine += str(newIntensity) + "\t" + str(m.group(3)) + "\n"
+
+            prevSpecLine = str(newMZ - 1) + "\t" + str(newIntensity) + "\t" + str(m.group(3)) + "\n"
+            nextSpecLine = str(newMZ + 1) + "\t" + str(newIntensity) + "\t" + str(m.group(3)) + "\n"
+
+            currMgfSpectra += prevSpecLine
+            currMgfSpectra += processedLine
+            currMgfSpectra += nextSpecLine
         else:
             currMgfSpectra += eachMGFrow + "\n"
     #print "Postprocessed MGF= ", currMgfSpectra
