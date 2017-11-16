@@ -73,7 +73,7 @@ public class ServerStart {
 			} catch (ServletException e1) {
 				e1.printStackTrace();
 			}
-			//List<FastaProtein> resultList = new ArrayList<>();
+			List<FastaProtein> resultList = new ArrayList<>();
 
 			List<Integer> counterList = new ArrayList<>();
 			
@@ -104,13 +104,13 @@ public class ServerStart {
 						if (!result.isEmpty()) {
 							if (isFirstTime) {
 								try {
-									output.append("{");
+									output.append("");
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
 							} else {
 								try {
-									output.append(",");
+									output.append("");
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
@@ -118,13 +118,13 @@ public class ServerStart {
 							FastaProtein prot = FastaTransformerService.GenerateProtein(result);
 
 							if (prot != null) {
-								// resultList.add(prot);
-								try {
-									output.append(gson.toJson(prot));
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
+								 resultList.add(prot);
+//								try {
+//									output.append(gson.toJson(prot));
+//								} catch (IOException e) {
+//									// TODO Auto-generated catch block
+//									e.printStackTrace();
+//								}
 							}
 							result.clear();
 							result.append(line + "\n");
@@ -140,22 +140,28 @@ public class ServerStart {
 				});
 				FastaProtein prot = FastaTransformerService.GenerateProtein(result);
 				if (prot != null) {
-					// resultList.add(prot);
-					try {
-						output.append(gson.toJson(prot));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					 resultList.add(prot);
+//					try {
+//						output.append(gson.toJson(prot));
+//					} catch (IOException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
 				}
 			} catch (IOException e) {
 
 				e.printStackTrace();
 			}
 
-			//String json = gson.toJson(resultList);
+			String json = gson.toJson(resultList);
+			try {
+				output.append(json);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			output.close();
-			//System.out.println(json);
+			System.out.println(json);
 
 			return "successfull digested and fragmented";
 

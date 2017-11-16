@@ -1,0 +1,18 @@
+1. Start the server
+	- main.StartServer 
+	or 
+	- java -jar target/Fasta transformator-jar-with-dependencies.jar
+2. Usage
+	- Browser --> localhost:1234
+	- click on "Datei auswählen" button and choose a .fasta file
+	- click on "Upload FASTA"
+3. What happens
+	- first create a ./upload folder and upload the file completely as bytestream to it
+	- go as stream through the lines
+	- when a complete text of a protein is found, then digest
+	- for every peptide fragment
+	- everything is connected as entity and via uuid's
+	- via GSON library create JSON from this and put in a file in ./upload folder and print into console
+4. FAQ
+	- roman.zoun@ovgu.de
+	

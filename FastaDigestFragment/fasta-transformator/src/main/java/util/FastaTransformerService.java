@@ -29,8 +29,10 @@ public class FastaTransformerService {
 		for (Peptide pep : list) {
 
 			FastaPeptide fPep = new FastaPeptide();
+			fPep.setUuid(UUID.randomUUID());
+			fPep.setProtUuid(fastaProtein.getUuid());
 			fPep.setSequence(pep.toString());
-			fPep.setSpectrumList(Fragmenter.getTheoreticalSpectra(pep));
+			fPep.setSpectrumList(Fragmenter.getTheoreticalSpectra(pep, fPep.getUuid()));
 
 			result.add(fPep);
 

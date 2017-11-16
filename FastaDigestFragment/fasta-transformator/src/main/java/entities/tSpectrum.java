@@ -1,9 +1,12 @@
 package entities;
 
 import java.util.List;
+import java.util.UUID;
 
 public class tSpectrum {
 
+	private UUID uuid;
+	private UUID pepUuid;
 	private int charge;
 	private double pepMass;
 	private double pepMz;
@@ -31,6 +34,18 @@ public class tSpectrum {
 	}
 	public void setPepMz(double pepMz) {
 		this.pepMz = pepMz;
+	}
+	public UUID getUuid() {
+		return uuid;
+	}
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
+	}
+	public UUID getPepUuid() {
+		return pepUuid;
+	}
+	public void setPepUuid(UUID pepUuid) {
+		this.pepUuid = pepUuid;
 	}
 	
 }

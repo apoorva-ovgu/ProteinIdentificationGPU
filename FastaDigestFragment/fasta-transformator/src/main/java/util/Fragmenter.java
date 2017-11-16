@@ -3,6 +3,7 @@ package util;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.UUID;
 
 import org.expasy.mzjava.core.ms.peaklist.PeakList;
 import org.expasy.mzjava.core.ms.spectrum.IonType;
@@ -47,7 +48,7 @@ public class Fragmenter {
 
 	}
 	
-public static List<tSpectrum> getTheoreticalSpectra(Peptide pep) {
+public static List<tSpectrum> getTheoreticalSpectra(Peptide pep, UUID pepUuid) {
 
 		//X?
 		if(pep.toString().toUpperCase().contains("X"))
@@ -64,6 +65,8 @@ public static List<tSpectrum> getTheoreticalSpectra(Peptide pep) {
 		result.add(pep.getMolecularMass());
 		List<tSpectrum> resultList = new ArrayList<>();
 		tSpectrum spectrum = new tSpectrum();
+		spectrum.setUuid(UUID.randomUUID());
+		spectrum.setPepUuid(pepUuid);
 		spectrum.setMzValues(result);
 		spectrum.setCharge(2);
 		spectrum.setPepmass(ps.getPrecursor().getMass());
