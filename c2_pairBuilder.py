@@ -7,7 +7,7 @@ from kafka import KafkaConsumer
 from kafka import KafkaProducer
 from dbOperations import connectToDB
 
-flag_compareAll = True
+flag_compareAll = False
 fastaSpectrumIDs = []
 mgf_id = "Not Set"
 
@@ -42,17 +42,26 @@ def createPairs(createForId):
     #print "Creating pairs for ",createForId
     pairs_arr = []
     if flag_compareAll is True:
-
         for element in itertools.product([createForId], fastaSpectrumIDs):
             pairs_arr.append(element)
-        producer_uidMatches = KafkaProducer(bootstrap_servers=['localhost: 9092'])
-        producer_uidMatches.flush()
-        try:
-            producer_uidMatches.send("uidMatches"
-                          , value=str(len(pairs_arr)).encode('utf-8')
-                          , key= str(createForId).encode('utf-8'))
-        except Exception as e:
-            print("Leider exception in producer_uidMatches producer: " + str(e))
+
+    else:
+        selectedFastas = []
+        for f in fastaSpectrumIDs:
+            if float(f[1])>799 and float(f[1])<810:
+                selectedFastas.append(f[0])
+        for element in itertools.product([createForId], selectedFastas):
+            pairs_arr.append(element)
+
+
+    producer_uidMatches = KafkaProducer(bootstrap_servers=['localhost: 9092'])
+    producer_uidMatches.flush()
+    try:
+        producer_uidMatches.send("uidMatches"
+                      , value=str(len(pairs_arr)).encode('utf-8')
+                      , key= str(createForId).encode('utf-8'))
+    except Exception as e:
+        print("Leider exception in producer_uidMatches producer: " + str(e))
 
         producer_uidMatches.send("uidMatches"
                           , value=b'code by apoorva patrikar'
@@ -98,9 +107,17 @@ def storeMGF(mgfid, mgfContent):
 
 
 def readFromFastaDB():
-    resultsFromCass = table_contents("id", "xtandem.protein")
-    for eachID in resultsFromCass:
-        fastaSpectrumIDs.append(eachID)
+    #resultsFromCass = table_contents("peptide_id,pep_mass", "fasta.pep_spec")
+    cass_session = connectToDB()
+    query = "SELECT peptide_id,pep_mass FROM fasta.pep_spec";
+    select_results = cass_session.execute(query)
+    for row in select_results:
+        stringId = str(eval("row.peptide_id"))
+        stringMass = str(eval("row.pep_mass"))
+        fastaSpectrumIDs.append((stringId,stringMass))
+    cass_session.shutdown()
+    #for eachID in resultsFromCass:
+    #    fastaSpectrumIDs.append(eachID)
 
 def postProcessMgf(message):
     currMgfSpectra = ""
