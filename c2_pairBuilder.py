@@ -11,12 +11,14 @@ flag_compareAll = False
 fastaSpectrumIDs = []
 mgf_id = "Not Set"
 
+filter_pepmass = 50
+curr_mgf_pepmass = 0.0
 
-def filldb(mgf_id, mgf_metadata, mgf_sequence):
+def filldb(mgf_id, mgf_metadata, mgf_title, mgf_mass, mgf_charge,mgf_sequence):
     session = connectToDB()
-    session.execute("""INSERT INTO xtandem.exp_spectrum (id, metadata, data) 
-        VALUES (%s, %s, %s)""",
-        (mgf_id,  mgf_metadata, mgf_sequence)
+    session.execute("""INSERT INTO xtandem.exp_spectrum (id, allmeta, title, pepmass, charge, data) 
+        VALUES (%s, %s, %s, %s ,%s, %s)""",
+        (mgf_id,  mgf_metadata,  mgf_title, mgf_mass, mgf_charge, mgf_sequence)
     )
     session.shutdown()
 
@@ -39,7 +41,7 @@ def table_contents(toselect, table_name):
     return tempArray
 
 def createPairs(createForId):
-    #print "Creating pairs for ",createForId
+    print "Creating pairs for ",createForId
     pairs_arr = []
     if flag_compareAll is True:
         for element in itertools.product([createForId], fastaSpectrumIDs):
@@ -47,9 +49,12 @@ def createPairs(createForId):
 
     else:
         selectedFastas = []
+        min_threshold = curr_mgf_pepmass - filter_pepmass
+        max_threshold = curr_mgf_pepmass + filter_pepmass
         for f in fastaSpectrumIDs:
-            if float(f[1])>799 and float(f[1])<810:
+            if float(f[1]) > min_threshold and float(f[1]) < max_threshold:
                 selectedFastas.append(f[0])
+        print selectedFastas
         for element in itertools.product([createForId], selectedFastas):
             pairs_arr.append(element)
 
@@ -98,13 +103,28 @@ def sendPairs(pairsCreated, time):
     producer_c2.close()
 
 def storeMGF(mgfid, mgfContent):
+    global curr_mgf_pepmass
     print("Received spectrum for ID ", mgfid)
     tmpArr = mgfContent.split("#")    #0:data 1:metadata
+
+    metadata = tmpArr[1].split("\n")
+    title = ""
+    pepmass = 0
+    charge = ""
+
+    for md in metadata:
+        if "TITLE" in md:
+           title = md.split("=",1)[1]
+        elif "PEPMASS" in md:
+            pepmassAndIntensity = md.split("=", 1)[1]
+            pepmass = pepmassAndIntensity.split("\t")[0]
+            curr_mgf_pepmass = float(pepmass.lstrip())
+        elif "CHARGE" in md:
+            charge = md.split("=", 1)[1]
     try:
-        filldb(uuid.UUID('{' + mgfid + '}'), tmpArr[1], tmpArr[0])
+        filldb(uuid.UUID('{' + mgfid + '}'), tmpArr[1], title, curr_mgf_pepmass, charge,tmpArr[0])
     except Exception as e:
         print("Error filling exp_spectrum: " + str(e))
-
 
 def readFromFastaDB():
     #resultsFromCass = table_contents("peptide_id,pep_mass", "fasta.pep_spec")
@@ -148,17 +168,17 @@ def postProcessMgf(message):
     return currMgfSpectra
 
 def run_step2():
-    consumer_c2 = KafkaConsumer('UIDSandMGF',
-                                bootstrap_servers=['localhost:9092']
-                                , group_id='apoorva-thesis')
-                                #, auto_offset_reset='earliest')
+    consumer_c2 = KafkaConsumer('topic_mgf'
+                                ,bootstrap_servers=['localhost:9092']
+                                , group_id='apoorva-thesis'
+                                , auto_offset_reset='earliest')
     session = connectToDB()
     session.execute("""TRUNCATE table xtandem.exp_spectrum  """)
     session.shutdown()
 
     readFromFastaDB()
 
-    print("Consumer is ready to listen!")#,consumer_c2.poll())
+    print("Consumer is ready to listen!",consumer_c2.poll())
     for message in consumer_c2:
         if "__init__" not in message.key:
             filteredMGFdata = postProcessMgf(message)
@@ -168,5 +188,7 @@ def run_step2():
             pairsCreated = createPairs(fullMGFkey[0])
             postTime = dt.now()
             sendPairs(pairsCreated, timedelta.total_seconds(postTime-preTime))  ### timedelta:  (days, seconds and microseconds)
+        else:
+            print "Initializing.... send again"
 
 run_step2()

@@ -12,12 +12,12 @@ metaData = ""
 mz_threshold = 150
 
 producer = KafkaProducer(bootstrap_servers=['localhost: 9092'])
-producer.send("UIDSandMGF"
+producer.send("topic_mgf"
                 , value = b'code by apoorva patrikar'
                 , key = b'__init__')
 
 for file in os.listdir(mgf_location):
-        if file.endswith(".mgx"):
+        if file.endswith(".mgf"):
             highest_intensity = 0
             for line in open(mgf_location + "/" + file, 'U'):
                 line = line.rstrip('\n')
@@ -31,7 +31,7 @@ for file in os.listdir(mgf_location):
                         try:
                             generatedID+="#"+str(highest_intensity)
                             fullSpectra_s+="#"+metaData
-                            producer.send("UIDSandMGF"
+                            producer.send("topic_mgf"
                                           , value = fullSpectra_s.encode('utf-8')
                                           , key = generatedID)
                         except Exception as e:
@@ -49,4 +49,3 @@ for file in os.listdir(mgf_location):
                         metaData+=line+"\n"
 producer.flush()
 producer.close()
-
