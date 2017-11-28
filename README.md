@@ -19,7 +19,7 @@ Steps followed on windows (cygwin):
 
 ubuntu with daemon:
 1. install zookeeper daemon               sudo apt-get install zookeeperd
-2. start it                               sudo bin/zkServer.sh start
+2. start it                               go to "cd /usr/share/zookeeper/" and then:: sudo bin/zkServer.sh start
 3. download and install kafka 2.10
 4. start it                               bin/kafka-server-start.sh config/server.properties
 
