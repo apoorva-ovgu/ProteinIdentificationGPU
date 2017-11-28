@@ -16,3 +16,10 @@ Steps followed on windows (cygwin):
 1. cd "C:\thesis\cassandra"  and then bin/cassandra.bat
 2. cd "C:\thesis\kafka"      and then bin/zookeeper-server-start.sh config/zookeeper.properties
 3. cd "C:\thesis\kafka"      and then bin/kafka-server-start.sh config/server.properties
+
+ubuntu with daemon:
+1. install zookeeper daemon               sudo apt-get install zookeeperd
+2. start it                               sudo bin/zkServer.sh start
+3. download and install kafka 2.10
+4. start it                               bin/kafka-server-start.sh config/server.properties
+
