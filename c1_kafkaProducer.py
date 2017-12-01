@@ -41,13 +41,15 @@ for file in os.listdir(mgf_location):
                         fullSpectra_s = ""
                         metaData = ""
 
-                    elif m is not None and "=" not in line:
-                        if int(float(m.group(1)) > mz_threshold):
-                            fullSpectra_s+=line+"\n"
-                            #print "--", m.group(2)
-                            if int(float(m.group(2)))>highest_intensity:
 
-                                highest_intensity = int(float(m.group(2)))
+                    elif m is not None and "=" not in line:
+                        currmz = float(m.group(1))
+                        currint = float(m.group(2))
+
+                        if int(currmz) > mz_threshold:
+                            fullSpectra_s+=line+"\n"
+                            if int(float(m.group(2)))>highest_intensity:
+                                highest_intensity = float(m.group(2))
 
                     elif "=" in line:
                             metaData+=line+"\n"
