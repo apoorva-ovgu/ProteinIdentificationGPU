@@ -16,7 +16,7 @@ curr_mgf_pepmass = 0.0
 
 def filldb(mgf_id, mgf_metadata, mgf_title, mgf_mass, mgf_charge,mgf_sequence):
     session = connectToDB()
-    session.execute("""INSERT INTO xtandem.exp_spectrum (id, allmeta, title, pepmass, charge, data) 
+    session.execute("""INSERT INTO mgf.exp_spectrum (id, allmeta, title, pepmass, charge, data) 
         VALUES (%s, %s, %s, %s ,%s, %s)""",
         (mgf_id,  mgf_metadata,  mgf_title, mgf_mass, mgf_charge, mgf_sequence)
     )
@@ -78,12 +78,10 @@ def createPairs(createForId):
 def sendPairs(pairsCreated, time):
     producer_c2 = KafkaProducer(bootstrap_servers=['localhost: 9092'])
     producer_c2.flush()
-    producer_c2.send("UIDSandMGF"
-                  , value=b'code by apoorva patrikar'
-                  , key=b'__init__')
+    #producer_c2.send("UIDSandMGF"
+    #              , value=b'code by apoorva patrikar'
+    #              , key=b'__init__')
     loadBalancer = 0
-
-
     for couple in pairsCreated:
         couple = couple + (loadBalancer,) + (time,)
         packagedCouple = str(couple).encode('utf-8')
@@ -117,8 +115,12 @@ def storeMGF(mgfid, mgfContent):
            title = md.split("=",1)[1]
         elif "PEPMASS" in md:
             pepmassAndIntensity = md.split("=", 1)[1]
-            pepmass = pepmassAndIntensity.split("\t")[0]
-            curr_mgf_pepmass = float(pepmass.lstrip())
+            #pepmass = pepmassAndIntensity.split("\t")[0]
+            #curr_mgf_pepmass = float(pepmass.lstrip())
+            p = re.compile('(\w+)')
+            m = p.match(pepmassAndIntensity)
+            curr_mgf_pepmass = float(m.group(1))
+
         elif "CHARGE" in md:
             charge = md.split("=", 1)[1]
     try:
@@ -127,7 +129,6 @@ def storeMGF(mgfid, mgfContent):
         print("Error filling exp_spectrum: " + str(e))
 
 def readFromFastaDB():
-    #resultsFromCass = table_contents("peptide_id,pep_mass", "fasta.pep_spec")
     cass_session = connectToDB()
     query = "SELECT peptide_id,pep_mass FROM fasta.pep_spec";
     select_results = cass_session.execute(query)
@@ -136,8 +137,6 @@ def readFromFastaDB():
         stringMass = str(eval("row.pep_mass"))
         fastaSpectrumIDs.append((stringId,stringMass))
     cass_session.shutdown()
-    #for eachID in resultsFromCass:
-    #    fastaSpectrumIDs.append(eachID)
 
 def postProcessMgf(message):
     currMgfSpectra = ""
@@ -170,10 +169,10 @@ def postProcessMgf(message):
 def run_step2():
     consumer_c2 = KafkaConsumer('topic_mgf'
                                 ,bootstrap_servers=['localhost:9092']
-                                , group_id='apoorva-thesis'
-                                , auto_offset_reset='earliest')
+                                , group_id='apoorva-thesis')
+                                #, auto_offset_reset='earliest')
     session = connectToDB()
-    session.execute("""TRUNCATE table xtandem.exp_spectrum  """)
+    session.execute("""TRUNCATE table mgf.exp_spectrum  """)
     session.shutdown()
 
     readFromFastaDB()

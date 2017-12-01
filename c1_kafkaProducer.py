@@ -6,7 +6,8 @@ from kafka import KafkaProducer
 mgf_location = os.path.join(os.path.dirname(__file__), 'datafiles')
 mgfSpectrumIDs = []
 fullSpectra_s = ""
-p = re.compile('(\d+.\d+)\t(\d+)\t(\d\+)')
+p = re.compile('(\d+\.*\d*)[ \t](\d+\.*\d*)')
+
 generatedID = ""
 metaData = ""
 mz_threshold = 150
@@ -40,12 +41,15 @@ for file in os.listdir(mgf_location):
                         fullSpectra_s = ""
                         metaData = ""
 
-                    elif m is not None:
+                    elif m is not None and "=" not in line:
                         if int(float(m.group(1)) > mz_threshold):
                             fullSpectra_s+=line+"\n"
+                            #print "--", m.group(2)
                             if int(float(m.group(2)))>highest_intensity:
+
                                 highest_intensity = int(float(m.group(2)))
-                    else:
-                        metaData+=line+"\n"
+
+                    elif "=" in line:
+                            metaData+=line+"\n"
 producer.flush()
 producer.close()

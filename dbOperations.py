@@ -3,7 +3,7 @@ from cassandra.cluster import Cluster
 def connectToDB():
     cluster = Cluster(['127.0.0.1'])
     session = cluster.connect()
-    session.set_keyspace('xtandem')
+    #session.set_keyspace('xtandem')
     return session
 
 def viewTable(toselect, table_name):
@@ -62,3 +62,5 @@ def dropTable(table_name):
 
 #print "\nTable scores:::\n"
 #viewTable('*','xtandem.psm')
+
+#dropTable("mgf.exp_spectrum");
