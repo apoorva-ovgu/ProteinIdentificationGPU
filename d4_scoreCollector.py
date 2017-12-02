@@ -7,9 +7,21 @@ import threading
 from threading import Thread
 from datetime import timedelta, datetime as dt
 
+import cProfile
+import cStringIO
+import pstats
+
+#Profile block 1
+profile = False
+
+if profile:
+    pr = cProfile.Profile()
+    pr.enable()
+#End of Profile block 1
+
 cluster = Cluster(['127.0.0.1'])
 session = cluster.connect()
-session.set_keyspace('xtandem')
+session.set_keyspace('scores')
 
 mgfClassInstances = []
 mgfDict = {}
@@ -18,7 +30,7 @@ timeDict = {}
 
 def storeScores(esid, tsid,score):
     session.execute(
-        """INSERT INTO xtandem.psm (id, exp_spectrum_uid, theo_spectrum_uid, score)
+        """INSERT INTO scores.psm (id, exp_spectrum_uid, theo_spectrum_uid, score)
         VALUES (%s, %s, %s, %s)""",
         (uuid.uuid1(), uuid.UUID('{' + esid + '}'), uuid.UUID('{' + tsid + '}'), float(score))
     )
@@ -29,8 +41,9 @@ def collect(scoreLine):
     receivedScore = scoreLine.value
     receivedScoreFor = scoreLine.key.split("#")
 
+    print receivedScore," ",str(receivedScoreFor)
     try:
-        if mgfDict[receivedScoreFor[0]] is not None:
+        if receivedScoreFor[0] in mgfDict:
             mgfDict[receivedScoreFor[0]] = int(mgfDict[receivedScoreFor[0]])-1
             #mgfClass: name, match, score, remainingComparisons, timeReqd
             mgfClassObj = \
@@ -44,12 +57,16 @@ def collect(scoreLine):
             storeScores(receivedScoreFor[0], receivedScoreFor[1], receivedScore)
 
             if int(mgfDict[receivedScoreFor[0]]) == 0:
-                sortScores(receivedScoreFor[0])
+                max_time = sortScores(receivedScoreFor[0])
                 a = dt.now()
                 b =timeDict[receivedScoreFor[0]]
                 c = timedelta.total_seconds(a - b)
-                print(receivedScoreFor[0]+" time from collector "+ str(c))
+                print(receivedScoreFor[0]+"end-to-end time from collector (use last for total time plot 1) "+ str(c)+ ", wait time (for wt plot 2) "+str(c-max_time)+", max_service_time (use all of them for service time plot 3) "+str(max_time))
+
+        else:
+            print "Hey, it wasn't in the dictionary!"
     except KeyError:
+        print "error in:: receivedScoreFor: ",str(receivedScoreFor), "(data#key)",
         print "Key does not exist....STALE  DATA"
 
 def sortScores(mgfid):
@@ -65,16 +82,21 @@ def sortScores(mgfid):
             tmpArr.append(comparison)
 
     processingObjArr = sorted(tmpArr, reverse=True, key=lambda tmpArr: tmpArr.score)
-
+    max_time = 0
+    f1 = 0
     for eachItem in processingObjArr:
+        if f1==0:
+            max_time = eachItem.timeReqd
+            f1=1
         mgfClassInstances.remove(eachItem)
         toPrint = " ...matched with="+eachItem.match\
                   +" ...with a score of="+str(eachItem.score)\
-                  +" ...and computing time="+str(eachItem.timeReqd)
+                  +" ...and computing time (do not use these numbers)="+str(eachItem.timeReqd)
 
         print toPrint
 
         sendResults(producer_d4, mgfid, toPrint)
+        return max_time
 
 def getScores():
     consumer_scores = KafkaConsumer('scores'
@@ -82,6 +104,7 @@ def getScores():
                                      , group_id='apoorva-thesis')
     print "Ready to collect scores!"
     for msg in consumer_scores:
+
         collect(msg)
 
 def getuidMetadata():
@@ -107,3 +130,13 @@ def sendResults(producer_d4, keyToSend, valueToSend):
 if __name__ == '__main__':
     Thread(target = getuidMetadata).start()
     Thread(target = getScores).start()
+
+#Profile block 2
+if profile:
+        pr.disable()
+        s = cStringIO.StringIO()
+        sortby = 'cumulative'
+        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+        ps.print_stats()
+        print s.getvalue()
+        #End of profile block 2

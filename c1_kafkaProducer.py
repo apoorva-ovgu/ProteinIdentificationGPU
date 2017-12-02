@@ -1,7 +1,18 @@
+from kafka import KafkaProducer
 import uuid
 import re
 import os
-from kafka import KafkaProducer
+import cProfile
+import cStringIO
+import pstats
+
+#Profile block 1
+profile = False
+
+if profile:
+    pr = cProfile.Profile()
+    pr.enable()
+#End of Profile block 1
 
 mgf_location = os.path.join(os.path.dirname(__file__), 'datafiles')
 mgfSpectrumIDs = []
@@ -55,3 +66,13 @@ for file in os.listdir(mgf_location):
                             metaData+=line+"\n"
 producer.flush()
 producer.close()
+
+#Profile block 2
+if profile:
+        pr.disable()
+        s = cStringIO.StringIO()
+        sortby = 'cumulative'
+        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+        ps.print_stats()
+        print s.getvalue()
+#End of profile block 2

@@ -1,11 +1,25 @@
 import uuid
 import re
 import itertools
+import math
 from datetime import timedelta, datetime as dt
 from operator import itemgetter
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
 from dbOperations import connectToDB
+
+import cProfile
+import cStringIO
+import pstats
+
+#Profile block 1
+profile = False
+
+if profile:
+    pr = cProfile.Profile()
+    pr.enable()
+#End of Profile block 1
+
 
 flag_compareAll = False
 fastaSpectrumIDs = []
@@ -14,6 +28,7 @@ curr_mgf_pepmass = 0.0
 
 filter_pepmass = 100
 filter_intensity = 1.0
+filter_maxPeaks = 50
 
 def filldb(mgf_id, mgf_metadata, mgf_title, mgf_mass, mgf_charge,mgf_sequence):
     session = connectToDB()
@@ -55,7 +70,8 @@ def createPairs(createForId):
         for f in fastaSpectrumIDs:
             if float(f[1]) > min_threshold and float(f[1]) < max_threshold:
                 selectedFastas.append(f[0])
-        print selectedFastas
+                #print "shortlisted: "+str(f)
+        #print selectedFastas
         for element in itertools.product([createForId], selectedFastas):
             pairs_arr.append(element)
 
@@ -66,13 +82,14 @@ def createPairs(createForId):
         producer_uidMatches.send("uidMatches"
                       , value=str(len(pairs_arr)).encode('utf-8')
                       , key= str(createForId).encode('utf-8'))
+        print "Uid message sent- Key ",str(createForId)," Val ",str(len(pairs_arr))
     except Exception as e:
         print("Leider exception in producer_uidMatches producer: " + str(e))
 
-        producer_uidMatches.send("uidMatches"
+    producer_uidMatches.send("uidMatches"
                           , value=b'code by apoorva patrikar'
                           , key=b'__final__')
-        producer_uidMatches.close()
+    producer_uidMatches.close()
 
     return pairs_arr
 
@@ -106,7 +123,7 @@ def storeMGF(mgfid, mgfContent):
     global curr_mgf_pepmass
     print("Received spectrum for ID ", mgfid)
     tmpArr = mgfContent.split("#")    #0:data 1:metadata
-
+    #print tmpArr
     metadata = tmpArr[1].split("\n")
     title = ""
     pepmass = 0
@@ -117,12 +134,9 @@ def storeMGF(mgfid, mgfContent):
            title = md.split("=",1)[1]
         elif "PEPMASS" in md:
             pepmassAndIntensity = md.split("=", 1)[1]
-            #pepmass = pepmassAndIntensity.split("\t")[0]
-            #curr_mgf_pepmass = float(pepmass.lstrip())
             p = re.compile('(\w+)')
             m = p.match(pepmassAndIntensity)
             curr_mgf_pepmass = float(m.group(1))
-
         elif "CHARGE" in md:
             charge = md.split("=", 1)[1]
     try:
@@ -141,15 +155,19 @@ def readFromFastaDB():
     cass_session.shutdown()
 
 def filter1(mgf_received):
-    filter1_mgf = ""
+    filter1_mgf = []
+    x = []
     start_flag = False
     fm = ()  # previous line's mz,intensity
     data_arr = mgf_received.split("\n")
+    print "\nNo filter applied, size = "+str(len(data_arr))
+    f_fm = 0.0
+    prev_fm = ()
+
     ctr = 0
     prev_inserted = False
 
     for eachMGFrow in data_arr:
-        ctr +=1
         if "\t" in eachMGFrow:
             x = eachMGFrow.split("\t")
         else:
@@ -158,121 +176,128 @@ def filter1(mgf_received):
         if start_flag is False:
             start_flag = True
             prev_fm = (float(x[0]),float(x[1]))
+            f_fm=float(x[0])
             pass
         else:
             if ctr == len(data_arr):
                 break
             fm = (float(x[0]), float(x[1]))
 
-            filter_diff = fm[0] - prev_fm[0]  # remove isotopes
-            prev_inserted = False
+            filter_diff = fm[0] - f_fm  # remove isotopes
             if (fm[0] < 200) or (filter_diff >= 0.95):
-                filter1_mgf += str(prev_fm[0]) + "\t" + str(prev_fm[1]) + "\n"
+                #filter1_mgf += str(prev_fm[0]) + "\t" + str(prev_fm[1]) + "\n"
+                filter1_mgf.append(prev_fm)
                 prev_fm = fm
-                prev_inserted = True
+                f_fm = fm[0]
             elif (fm[1]>prev_fm[1]):
                 prev_fm = fm
             #else:
                 #print "lt 200 crit= ",str(fm[0]),"  or  gt 0.95... ",str(filter_diff)
                 #print "previous (what did not get added, for now)= ",str(prev_fm)
+            ctr += 1
 
-    filter1_mgf += eachMGFrow+ "\n"
-    print "First filter spplied, size = "+str(len(filter1_mgf.split("\n")))
+    #print "Adding prev_fm "+str(prev_fm)
+    filter1_mgf.append(prev_fm)
+    #print "\nFirst filter applied, size = "+str(len(filter1_mgf))
+    #print "After f1= "+str(filter1_mgf)
     return filter1_mgf
 
 def filter2(mgf_received, highestIntensity):
-    #print "after f1:::\n",str(mgf_received)
     filter_threshold = 1.0
     filter_dynamicrange = 100
-    filter2_mgf = ""
-    data_arr = mgf_received.split("\n")
+    filter2_mgf = []
+    #data_arr = mgf_received.split("\n")
     ctr = 0
-    for eachMGFrow in data_arr:
-        ctr += 1
-        if eachMGFrow.lstrip()!="":
-            if "\t" in eachMGFrow:
-                x = eachMGFrow.split("\t")
-            else:
-                x = eachMGFrow.split(" ")
-            #print str(x)
-            oldIntensity =  float(x[1])
+    for eachMGFrow in mgf_received:
+      #  ctr += 1
+      #  if eachMGFrow.lstrip()!="":
+            oldIntensity =  float(eachMGFrow[1])
             newIntensity = oldIntensity / (float(highestIntensity) / filter_dynamicrange)
             if newIntensity >= filter_threshold:
-                filter2_mgf+= x[0] + "\t" + str(newIntensity) + "\n"
+                #filter2_mgf+= eachMGFrow[0] + "\t" + str(newIntensity) + "\n"
+                filter2_mgf.append((eachMGFrow[0],newIntensity))
             #else:
-            #    tmp = x[0] + "\t" + str(newIntensity) + "\n"
+            #    tmp = eachMGFrow[0] + "\t" + str(newIntensity) + "\n"
             #    if 200<float(x[0])<300:
             #        print "failed ",tmp
 
-    #print "after f2:::\n", str(filter2_mgf)
-    print "Second filter spplied, size = "+str(len(filter2_mgf.split("\n")))+"\non highest "+str(highestIntensity)
+    #print "\nSecond filter applied, size = " + str(len(filter2_mgf))
+    #print "After f2=", str(filter2_mgf)
+
     return filter2_mgf
 
 def filter3(mgf_received):
-    filter3_mgf = ""
+    filter3_mgf = []
     start_flag = False
     fm = ()  # previous line's mz,intensity
-    data_arr = mgf_received.split("\n")
-    ctr = 0
-    prev_inserted = False
-    for eachrow3 in data_arr:
-        ctr += 1
-        if "\t" in eachrow3:
-            x = eachrow3.split("\t")
-        else:
-            x = eachrow3.split(" ")
+    x = []
+    prev_fm = ()
+    f_fm = 0.0
 
+    for eachrow3 in mgf_received:
         if start_flag is False:
             start_flag = True
-            prev_fm = (float(x[0]), float(x[1]))
+            prev_fm = eachrow3
+            f_fm = float(eachrow3[0])
             pass
         else:
-            if ctr == len(data_arr):
-                break
-            fm = (float(x[0]), float(x[1]))
-
-            filter_diff = fm[0] - prev_fm[0]  # remove isotopes
+            fm = eachrow3
+            filter_diff = fm[0] - f_fm
             if (fm[0] < 200) or (filter_diff >= 1.5):
-                filter3_mgf += str(prev_fm[0]) + "\t" + str(prev_fm[1]) + "\n"
+                filter3_mgf.append(prev_fm)
                 prev_fm = fm
+                f_fm = fm[0]
             elif (fm[1] > prev_fm[1]):
                 prev_fm = fm
 
-    filter3_mgf += eachrow3 + "\n"
-    #print str(filter3_mgf)
-    print "Third filter spplied, size = " + str(len(filter3_mgf.split("\n")))
+    filter3_mgf.append(prev_fm)
+
+    #print "\nThird filter applied, size = " + str(len(filter3_mgf))
+    #print "after f3= " + str(filter3_mgf)
     return filter3_mgf
 
 def filter4(mgf_received):
-    filter4_mgf = ""
-    data_arr = mgf_received.split("\n")
+    print "Input mgf ",str(mgf_received)
+    filter4_mgf = []
     ctr = 0
-    tosort_array = []
-    sorted_array = []
 
-    for eachMGFrow in data_arr:
-        ctr += 1
-        if eachMGFrow.lstrip() != "":
-            if "\t" in eachMGFrow:
-                x = eachMGFrow.split("\t")
-            else:
-                x = eachMGFrow.split(" ")
-            #sort by intensities
-            tosort_array.append((float(x[0]),float(x[1])))
-
-    sorted_array = sorted(tosort_array,key=itemgetter(1), reverse=True)
-
-    ctr = 50
+    sorted_array = sorted(mgf_received,key=itemgetter(1), reverse=True)
+    ctr = filter_maxPeaks
     for topn in sorted_array:
-        ctr-=1
         if ctr>0:
-            filter4_mgf+= str(topn[0]) + "\t" + str(topn[1]) + "\n"
+            filter4_mgf.append(topn)
         else:
             break
+        ctr -= 1
 
-    #print filter4_mgf
-    print "Fourth filter applied, size = " + str(len(filter4_mgf.split("\n")))
+    #print "\nFourth filter applied, size = " ,len(filter4_mgf)
+    #print "after f4= " + str(filter4_mgf)
     return  filter4_mgf
+
+def filter5(mgf_received):
+    filter5mgf = ""
+    #new_arr = []
+
+    for eachline in mgf_received:
+        currmz = eachline[0]
+        currint = str(eachline[1])
+        newmz = math.floor(currmz / 0.4)
+
+        prevSpecLine = str(newmz-1) + "\t" + currint + "\n"
+        processedLine = str(newmz) + "\t" + currint + "\n"
+        nextSpecLine = str(newmz + 1) + "\t" + currint + "\n"
+
+        filter5mgf += prevSpecLine
+        filter5mgf += processedLine
+        filter5mgf += nextSpecLine
+
+    #    new_arr.append((newmz-1, currint))
+    #    new_arr.append((newmz , currint))
+    #    new_arr.append((newmz + 1, currint))
+
+    #sorted_array = sorted(new_arr, key=itemgetter(0))
+    #print "sorted= "+str(sorted_array)
+    return filter5mgf
 
 def postProcessMgf(message):
     currMgfSpectra = ""
@@ -292,10 +317,28 @@ def postProcessMgf(message):
             #print "metadata"
             rawmetadata += eachMGFrow + "\n"
 
-    f1mgf = filter1(rawmgf)  # 3: remove isotopes
-    f2mgf = filter2(f1mgf, highestIntensity)  # 6: /100
-    f3mgf = filter3(f2mgf)  #
-    f4mgf = filter4(f3mgf)
+    f2mgf = None
+    f3mgf = None
+    f4mgf = None
+    f5mgf = None
+
+    skip_flag = False
+    f1mgf = filter1(rawmgf.rstrip())  # 3: remove isotopes, removes multiple entries within 0.95 Da of each other
+    if len(f1mgf)<=0:
+        skip_flag = True
+    if skip_flag is False:
+        f2mgf = filter2(f1mgf, highestIntensity)  # 6:remove all peaks with a normalized intensity < 1
+    if f2mgf:
+        f3mgf = filter3(f2mgf)  # 8.1 clean_isotopes removes peaks that are probably C13 isotopes
+    if f3mgf:
+        f4mgf = filter4(f3mgf) #limit the total number of peaks used
+    if f4mgf:
+        f5mgf = filter5(f4mgf) #blurring
+    if f5mgf:
+        fullspectrum = f5mgf+rawmetadata
+    else:
+        fullspectrum = rawmetadata
+    return fullspectrum
 
 def postProcessMgf2(message):
     currMgfSpectra = ""
@@ -327,9 +370,6 @@ def postProcessMgf2(message):
                 else:
                     print "old fm - new fm is " + str(fm[0] - prev_fm[0])
                     ok_flag = False
-                # **** 3 *****
-                # **** 6 *****
-                # **** 6 *****
 
                 if ok_flag is True:
                     #intensity processing
@@ -383,8 +423,18 @@ def run_step2():
             storeMGF(fullMGFkey[0], filteredMGFdata)
             pairsCreated = createPairs(fullMGFkey[0])
             postTime = dt.now()
+            # Profile block 2
+            if profile:
+                pr.disable()
+                s = cStringIO.StringIO()
+                sortby = 'cumulative'
+                ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+                ps.print_stats()
+                print s.getvalue()
+            # End of profile block 2
             sendPairs(pairsCreated, timedelta.total_seconds(postTime-preTime))  ### timedelta:  (days, seconds and microseconds)
         else:
             print "Initializing.... send again"
 
 run_step2()
+

@@ -10,6 +10,17 @@ import re
 import itertools
 import tensorflow as tf
 
+import cProfile
+import cStringIO
+import pstats
+
+#Profile block 1
+profile = False
+
+if profile:
+    pr = cProfile.Profile()
+    pr.enable()
+#End of Profile block 1
 
 vector_location = os.path.join(os.path.dirname(__file__), 'datafiles')
 receivedPairs = []
@@ -63,16 +74,16 @@ def loadRealData(mgfid, fastaid):
         for i in range(0,len(m_plSeq)):
             m_pfSeq.append("1")
 
-    print "m_plSeq= ", m_plSeq
-    print "m_plSeq= ", m_pfSeq
-    print "m_lM= ", m_lM
-    print "m_fI= ", m_fI
-    f = open('output/output_results.txt', 'a')
-    f.write('\n' + "m_plSeq=" + str(m_plSeq))
-    f.write('\n' + "m_pfSeq=" +str(m_pfSeq))
-    f.write('\n' + "m_lM=" +str(m_lM))
-    f.write('\n' + "m_fI=" +str(m_fI))
-    f.close()
+    #print "m_plSeq= ", m_plSeq
+    #print "m_plSeq= ", m_pfSeq
+    #print "m_lM= ", m_lM
+    #print "m_fI= ", m_fI
+    #f = open('output/output_results.txt', 'a')
+    #f.write('\n' + "m_plSeq=" + str(m_plSeq))
+    #f.write('\n' + "m_pfSeq=" +str(m_pfSeq))
+    #f.write('\n' + "m_lM=" +str(m_lM))
+    #f.write('\n' + "m_fI=" +str(m_fI))
+    #f.close()
 
     cass_session.shutdown()
 
@@ -109,11 +120,12 @@ def sendScores(mgfid, fastaid, currScore, timeReqd):
     producer_c3.flush()
     formedKey = mgfid+"#"+fastaid+"#"+str(timeReqd)
     formedKey = str(formedKey.encode('utf-8'))
-
+    #print "Sent .bf.bf.bf ", formedKey
     try:
         producer_c3.send("scores"
                          ,value = str(currScore).encode('utf-8')
-                         ,key = formedKey.encode('utf-8'))
+                         ,key = formedKey)
+        #print "Sent .af.af.af ",formedKey
     except Exception as e:
         print("Exception in Kafka producer in score sending: " + e.message)
     finally:
@@ -128,8 +140,22 @@ def readFromPairBuilder(scorer_id):
     print("Consumer is ready to listen!")
     temp = 0
     currScore = -1
+    prof_ctr = 10
+
     for msg in consumer_c3:  #(mgfID, fastaID), load, time in ms
         if "__init__" not in msg.key:
+            prof_ctr-=1
+            if prof_ctr<=0:
+                # Profile block 2
+                if profile:
+                    pr.disable()
+                    s = cStringIO.StringIO()
+                    sortby = 'cumulative'
+                    ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+                    ps.print_stats()
+                    print s.getvalue()
+                    # End of profile block 2
+                    prof_ctr = 10
             pairdata = eval(str(msg.value))
             print "Received Pair: " ,pairdata
             preTime = dt.now()
@@ -139,9 +165,9 @@ def readFromPairBuilder(scorer_id):
                 st = "Final score of pair "+ str(temp)+ " is: "+ str(currScore)+ " at time "+str(dt.now())
                 print st
 
-                f = open('output/output_results.txt', 'a')
-                f.write('\n' + st)
-                f.close()
+                #f = open('output/output_results.txt', 'a')
+                #f.write('\n' + st)
+                #f.close()
             except Exception as e:
                 print "Error occured in pair ", temp, "....Hence skipped\n", str(e)
 
