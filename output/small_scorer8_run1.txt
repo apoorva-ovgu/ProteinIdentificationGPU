@@ -1,0 +1,308 @@
+
+9b1aa96a-d838-11e7-af4e-b8ac6fa02cf9 has 44 matches!
+9b1aa96b-d838-11e7-af4e-b8ac6fa02cf9 has 49 matches!
+9b1aa96c-d838-11e7-af4e-b8ac6fa02cf9 has 61 matches!
+9b1aa96d-d838-11e7-af4e-b8ac6fa02cf9 has 63 matches!
+9b1aa96e-d838-11e7-af4e-b8ac6fa02cf9 has 44 matches!
+9b1aa96f-d838-11e7-af4e-b8ac6fa02cf9 has 63 matches!
+All results collected for 9b1aa96d-d838-11e7-af4e-b8ac6fa02cf9 and the Sorting order is: 
+...matched with=02bcc2b0-628b-42b3-a82c-4749db2322d1 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.201982 
+...matched with=af7a96c6-4e19-490b-a225-51123d3bd7d2 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.235448 
+...matched with=87eec807-ee8e-4026-a9fe-4e54808c7ba2 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.219788 
+...matched with=538e2a65-9dab-424d-bb61-98e21f0cde20 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.211679 
+...matched with=29478bdb-990c-47d8-b1e6-3183f97d5842 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.207877 
+...matched with=29b47bcf-21b9-4fbd-af29-d855dca5bbce ...with a score of=0.0 ...and computing time (do not use these numbers)=0.207314 
+...matched with=680feca6-bd2c-42e1-a010-1a60a45225aa ...with a score of=0.0 ...and computing time (do not use these numbers)=0.197225 
+...matched with=49c54a37-f0bb-4457-ae3f-11e2b11682ef ...with a score of=0.0 ...and computing time (do not use these numbers)=0.216028 
+...matched with=fbedab56-9a8b-4065-ad1b-1ffa3d8d6b95 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.204659 
+...matched with=e564cde4-5c10-409a-9188-9fa91ab8f009 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.210457 
+...matched with=7dc7553b-71a1-4f78-9fdc-7b13ce8176f5 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.241872 
+...matched with=a821d839-d251-40a4-8992-aa02eeca715a ...with a score of=0.0 ...and computing time (do not use these numbers)=0.212181 
+...matched with=ee70f1aa-547f-47c0-b3ce-d151022886a3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.246226 
+...matched with=3742ba40-1540-4818-a957-ec12141f25c2 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.246505 
+...matched with=3be1e4cf-5eac-4a01-aa98-caa7eb8221e7 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.205656 
+...matched with=737ce33e-3956-4325-bea4-b1d8a8c02ead ...with a score of=0.0 ...and computing time (do not use these numbers)=0.233143 
+...matched with=2a7fb361-d7d4-4033-8fc6-14ae0995bc1c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.218754 
+...matched with=20c8dba5-4bd3-4f07-baa0-42fd62c9b37e ...with a score of=0.0 ...and computing time (do not use these numbers)=0.244065 
+...matched with=79eabc91-a516-4635-9a59-d24482a9ed5d ...with a score of=0.0 ...and computing time (do not use these numbers)=0.216147 
+...matched with=479f5290-2b15-4fcb-80fc-8669fe8aac2c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.245144 
+...matched with=cb0ffdd4-3774-4d9e-861c-86c88c0b3eb9 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.222484 
+...matched with=93b047b2-b403-4a08-b6e5-2bf3c7948c4f ...with a score of=0.0 ...and computing time (do not use these numbers)=0.218053 
+...matched with=1d142475-5591-4b06-9890-a13383196fd1 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.218932 
+...matched with=945dcaf6-ab2b-4f5a-97b4-1df9d61694f3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.227786 
+...matched with=a7df3b98-b47f-4bf4-bef6-013e2df27b81 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.20775 
+...matched with=0f9f523f-734a-4a0c-9892-a0525a58448c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.203386 
+...matched with=34355e58-3c82-4b3f-b03a-3be5fd0a6738 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.206046 
+...matched with=6e1fe2f8-5f09-4614-91db-5f65fea897ff ...with a score of=0.0 ...and computing time (do not use these numbers)=0.208804 
+...matched with=21499b04-87f5-4793-a2e2-7c7a2ca7b942 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.203794 
+...matched with=501a55ca-5d5a-4b6b-bbae-1f2a4b554940 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.25689 
+...matched with=230a8f01-45c7-47c0-a692-9d1128bd512c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.207041 
+...matched with=e877af01-d563-491d-ab3f-515edced30bd ...with a score of=0.0 ...and computing time (do not use these numbers)=0.209078 
+...matched with=55894673-73fe-4473-920e-2e73eaf4c56c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.206816 
+...matched with=0e26c5ca-4474-44fb-880e-459e629e235d ...with a score of=0.0 ...and computing time (do not use these numbers)=0.1988 
+...matched with=942eb7dc-50aa-4a0b-826f-1f9bb16fca67 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.19661 
+...matched with=ddc24d2b-245f-47a2-bfba-3d8acc0d4cf0 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.223519 
+...matched with=92b8019f-1894-4e12-980f-0a6cfffc9b51 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.217474 
+...matched with=263592ca-0584-42ff-8d92-0ce8c420d787 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.207815 
+...matched with=dfeff9c9-22f5-4eaf-9d4e-e2fc419811ee ...with a score of=0.0 ...and computing time (do not use these numbers)=0.215789 
+...matched with=73c7b27f-be3f-4def-8da3-e2f5466e21e3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.200374 
+...matched with=cb34d6f2-27c6-46d2-82c5-05686e439b85 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.204622 
+...matched with=0f4c1d6c-a510-49c2-9810-4e99c39a01b3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.207049 
+...matched with=0b0cd9c6-0f7f-4993-b82d-eee8fb4b42bf ...with a score of=0.0 ...and computing time (do not use these numbers)=0.216523 
+...matched with=07ab04f1-0f9b-4947-97c6-28d3792c11cb ...with a score of=0.0 ...and computing time (do not use these numbers)=0.197282 
+...matched with=6f1bd1ed-d1a7-41fa-9044-1785d881a039 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.19713 
+...matched with=3a80b65f-14ca-4321-bb46-913c825255a1 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.201095 
+...matched with=e460b9fb-2599-4eb6-aa56-7ba0e46bed5f ...with a score of=0.0 ...and computing time (do not use these numbers)=0.20267 
+...matched with=1176b934-c079-4673-8a23-14e16346a282 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.208942 
+...matched with=2e0c12db-6376-4a24-bda3-070a322171c0 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.218503 
+...matched with=f5c6dcdd-f668-4bfc-9f2a-429a1dee3088 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.20148 
+...matched with=48a36516-1db4-4152-a1a1-73b8cc4b3133 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.206936 
+...matched with=dc70e0fe-bede-40a5-833a-26156cc5ff76 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.210785 
+...matched with=01bda761-f1e5-4e3e-8068-861d5fe496fa ...with a score of=0.0 ...and computing time (do not use these numbers)=0.200401 
+...matched with=4d0fe552-3a45-49ae-a31c-29eb18285ec0 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.200318 
+...matched with=fe5650d7-3163-48cc-81f9-b710621e8fbf ...with a score of=0.0 ...and computing time (do not use these numbers)=0.213842 
+...matched with=232defb8-4d67-4648-8478-77e7772cb6f1 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.238449 
+...matched with=68985ee0-91de-44b4-b12e-416e70143ffb ...with a score of=0.0 ...and computing time (do not use these numbers)=0.203088 
+...matched with=319d444f-8fc5-4434-93c0-14057ceb8921 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.211534 
+...matched with=41db0fc3-c114-41e1-89ec-9e2611aa7022 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.212058 
+...matched with=f417ab24-7f4e-4f7f-9744-01b19fa76ba7 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.215581 
+...matched with=e752e9fc-480f-4d3e-9e97-413d0293b1c3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.234496 
+...matched with=b038b142-84c5-480e-8f24-ea569b0513f1 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.215016 
+...matched with=f2f6ba6a-67c2-4bbd-a594-f6c22c86a801 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.232181
+9b1aa96d-d838-11e7-af4e-b8ac6fa02cf9end-to-end time from collector (use last for total time plot 1) 2.976352, wait time (for wt plot 2) 2.77437, max_service_time (use all of them for service time plot 3) 0.201982
+
+9b1aa970-d838-11e7-af4e-b8ac6fa02cf9 has 44 matches!
+9b1aa971-d838-11e7-af4e-b8ac6fa02cf9 has 44 matches!
+9b1aa972-d838-11e7-af4e-b8ac6fa02cf9 has 53 matches!
+All results collected for 9b1aa971-d838-11e7-af4e-b8ac6fa02cf9 and the Sorting order is: 
+...matched with=caba0c48-a274-4aa2-a63c-85c79b7ef185 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.54158 
+...matched with=9f2f53bc-f302-4ec3-b6c0-2137cec360a5 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.514094 
+...matched with=d2e9dc56-ffd9-467a-aa01-178e61da3fbe ...with a score of=0.0 ...and computing time (do not use these numbers)=0.516475 
+...matched with=7758e0a9-890a-43e2-b07c-bc0a0a45148c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.516981 
+...matched with=2bedda35-33e1-45d4-b206-8ca7d24053d4 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.516368 
+...matched with=a5e73938-c169-4a84-a448-915b17a00511 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.517673 
+...matched with=4b84cdf3-4d9b-42dd-a17c-4917b17f0d84 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.514865 
+...matched with=37324514-bb6f-42a7-92d7-ab547c2e0796 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.528137 
+...matched with=2c8b5003-5eed-4ee9-97c9-e7464b6b39c8 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.536528 
+...matched with=26b4c3ca-a2ec-40eb-8111-14209e076c78 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.552211 
+...matched with=2fd501f1-e433-4580-98e4-e51d06e78411 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.530164 
+...matched with=1f056d23-4f46-49ee-811a-715aa2a6d04b ...with a score of=0.0 ...and computing time (do not use these numbers)=0.55875 
+...matched with=e8c6da46-8f29-4ef3-ad24-b356353ee237 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.549999 
+...matched with=0a93f13f-6d98-4ef2-ac03-ea5f54bde575 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.553215 
+...matched with=0fd39ecb-b14c-40e5-8fab-a2f9370fb2d9 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.563569 
+...matched with=c5aeda63-0c23-4588-b2a4-54afd5e49a63 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.559944 
+...matched with=163cf12d-2a5b-4dc4-a437-2275977024d3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.571992 
+...matched with=b8718609-25fd-4be4-ac8f-924f9f9c3218 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.538135 
+...matched with=5a14a477-3176-494a-ad37-0a510044d261 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.53329 
+...matched with=c51c8b43-e584-4f70-9ccc-bb2b77097d08 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.555512 
+...matched with=6fdc7bb2-ac53-4dc0-9f47-a5a9f8ba3056 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.538413 
+...matched with=2dd93e53-b9e6-472e-a9e3-5783b23685cb ...with a score of=0.0 ...and computing time (do not use these numbers)=0.546065 
+...matched with=53f1b7ec-7308-4fb7-8a3b-421ab524b7de ...with a score of=0.0 ...and computing time (do not use these numbers)=0.551513 
+...matched with=bb28c0f6-f91a-4f1f-91a8-772f3ed7a3e4 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.527648 
+...matched with=3bf9c9ff-2acd-4c18-864a-86079e1e6379 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.5356 
+...matched with=294b47f7-bddc-4877-bb91-6b31997b824a ...with a score of=0.0 ...and computing time (do not use these numbers)=0.563921 
+...matched with=5c659731-de63-4e7c-94af-476df99131f0 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.519897 
+...matched with=7b672a83-1a80-4a3b-bbc4-24088260a78b ...with a score of=0.0 ...and computing time (do not use these numbers)=0.550309 
+...matched with=d9763a57-5d5a-4cf5-9d98-7dd2811512c2 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.541183 
+...matched with=1bfcb775-7191-4abb-be52-a980fec83938 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.515587 
+...matched with=67d46de4-6b07-404d-aec5-37a73dc30b37 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.537319 
+...matched with=abd43aa8-6ef2-4bea-ac3c-5a95439a0b01 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.517577 
+...matched with=5a4e27d0-1948-436d-8aea-c22649766327 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.546718 
+...matched with=179a1192-e82b-4fd3-a86d-4fa9d59fa89c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.532996 
+...matched with=84d45eb0-fea6-4262-b740-ace0910fe84b ...with a score of=0.0 ...and computing time (do not use these numbers)=0.535161 
+...matched with=0686bfb2-4f0c-4517-ad5a-491c2609410d ...with a score of=0.0 ...and computing time (do not use these numbers)=0.559661 
+...matched with=ecc3d81b-bad4-4c35-9817-8f86c917c62d ...with a score of=0.0 ...and computing time (do not use these numbers)=0.534567 
+...matched with=f0a8efa7-0dde-47a6-a91c-6a0ab5174a14 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.538386 
+...matched with=bffa446b-b86c-492d-9cb0-c83571a0fdf3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.539526 
+...matched with=a72504ed-74ec-4fc8-bda4-0eb39a0d1ff4 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.513601 
+...matched with=d8888574-9f7b-4d90-b704-b3768ce6404a ...with a score of=0.0 ...and computing time (do not use these numbers)=0.543756 
+...matched with=b15db1fa-a379-4250-b3ef-ef959261032f ...with a score of=0.0 ...and computing time (do not use these numbers)=0.539644 
+...matched with=e7921e9f-2ca5-4ce3-9ec3-6dbed383c187 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.528117 
+...matched with=fe39c87d-1ac8-492d-bee6-b436e136a665 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.532105
+9b1aa971-d838-11e7-af4e-b8ac6fa02cf9end-to-end time from collector (use last for total time plot 1) 2.088425, wait time (for wt plot 2) 1.546845, max_service_time (use all of them for service time plot 3) 0.54158
+
+9b1aa973-d838-11e7-af4e-b8ac6fa02cf9 has 53 matches!
+9b1aa974-d838-11e7-af4e-b8ac6fa02cf9 has 55 matches!
+9b1aa975-d838-11e7-af4e-b8ac6fa02cf9 has 45 matches!
+9b1aa976-d838-11e7-af4e-b8ac6fa02cf9 has 53 matches!
+9b1aa977-d838-11e7-af4e-b8ac6fa02cf9 has 55 matches!
+All results collected for 9b1aa976-d838-11e7-af4e-b8ac6fa02cf9 and the Sorting order is: 
+...matched with=538e2a65-9dab-424d-bb61-98e21f0cde20 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.304551 
+...matched with=af7a96c6-4e19-490b-a225-51123d3bd7d2 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.263158 
+...matched with=291d947a-6625-4f95-9bc6-97a49893fdeb ...with a score of=0.0 ...and computing time (do not use these numbers)=0.25966 
+...matched with=29b47bcf-21b9-4fbd-af29-d855dca5bbce ...with a score of=0.0 ...and computing time (do not use these numbers)=0.313146 
+...matched with=7dc7553b-71a1-4f78-9fdc-7b13ce8176f5 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.27735 
+...matched with=29478bdb-990c-47d8-b1e6-3183f97d5842 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.301692 
+...matched with=79eabc91-a516-4635-9a59-d24482a9ed5d ...with a score of=0.0 ...and computing time (do not use these numbers)=0.28445 
+...matched with=26554be2-cf10-4fc2-b958-b80cabd3d253 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.277535 
+...matched with=02bcc2b0-628b-42b3-a82c-4749db2322d1 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.346896 
+...matched with=ee70f1aa-547f-47c0-b3ce-d151022886a3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.371422 
+...matched with=737ce33e-3956-4325-bea4-b1d8a8c02ead ...with a score of=0.0 ...and computing time (do not use these numbers)=0.357271 
+...matched with=20c8dba5-4bd3-4f07-baa0-42fd62c9b37e ...with a score of=0.0 ...and computing time (do not use these numbers)=0.300289 
+...matched with=3be1e4cf-5eac-4a01-aa98-caa7eb8221e7 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.260605 
+...matched with=63a6ccba-9069-46d5-b761-c56fa9ff20cf ...with a score of=0.0 ...and computing time (do not use these numbers)=0.25197 
+...matched with=0f9f523f-734a-4a0c-9892-a0525a58448c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.268067 
+...matched with=1d142475-5591-4b06-9890-a13383196fd1 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.31064 
+...matched with=7018fce8-e5fd-4668-b2ad-ebb6806bfd91 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.278798 
+...matched with=945dcaf6-ab2b-4f5a-97b4-1df9d61694f3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.304921 
+...matched with=501a55ca-5d5a-4b6b-bbae-1f2a4b554940 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.269547 
+...matched with=cb0ffdd4-3774-4d9e-861c-86c88c0b3eb9 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.289839 
+...matched with=942eb7dc-50aa-4a0b-826f-1f9bb16fca67 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.319495 
+...matched with=93b047b2-b403-4a08-b6e5-2bf3c7948c4f ...with a score of=0.0 ...and computing time (do not use these numbers)=0.276043 
+...matched with=69d551fc-034c-470a-b77c-908896befa90 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.326881 
+...matched with=479f5290-2b15-4fcb-80fc-8669fe8aac2c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.324049 
+...matched with=cb34d6f2-27c6-46d2-82c5-05686e439b85 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.289287 
+...matched with=e877af01-d563-491d-ab3f-515edced30bd ...with a score of=0.0 ...and computing time (do not use these numbers)=0.28192 
+...matched with=dfeff9c9-22f5-4eaf-9d4e-e2fc419811ee ...with a score of=0.0 ...and computing time (do not use these numbers)=0.293574 
+...matched with=230a8f01-45c7-47c0-a692-9d1128bd512c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.274514 
+...matched with=21499b04-87f5-4793-a2e2-7c7a2ca7b942 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.265973 
+...matched with=0f4c1d6c-a510-49c2-9810-4e99c39a01b3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.291483 
+...matched with=ddc24d2b-245f-47a2-bfba-3d8acc0d4cf0 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.300468 
+...matched with=6e1fe2f8-5f09-4614-91db-5f65fea897ff ...with a score of=0.0 ...and computing time (do not use these numbers)=0.304007 
+...matched with=11203d37-83b7-4f8f-beeb-cc91b2580a79 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.299642 
+...matched with=73c7b27f-be3f-4def-8da3-e2f5466e21e3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.332104 
+...matched with=92b8019f-1894-4e12-980f-0a6cfffc9b51 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.286988 
+...matched with=1de7f318-567f-42d6-a1b1-3add4e80a4ca ...with a score of=0.0 ...and computing time (do not use these numbers)=0.304831 
+...matched with=1176b934-c079-4673-8a23-14e16346a282 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.339706 
+...matched with=e460b9fb-2599-4eb6-aa56-7ba0e46bed5f ...with a score of=0.0 ...and computing time (do not use these numbers)=0.272597 
+...matched with=6f1bd1ed-d1a7-41fa-9044-1785d881a039 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.25156 
+...matched with=263592ca-0584-42ff-8d92-0ce8c420d787 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.252062 
+...matched with=dc70e0fe-bede-40a5-833a-26156cc5ff76 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.282753 
+...matched with=fe5650d7-3163-48cc-81f9-b710621e8fbf ...with a score of=0.0 ...and computing time (do not use these numbers)=0.278126 
+...matched with=01bda761-f1e5-4e3e-8068-861d5fe496fa ...with a score of=0.0 ...and computing time (do not use these numbers)=0.333156 
+...matched with=4d0fe552-3a45-49ae-a31c-29eb18285ec0 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.272718 
+...matched with=8e9379ba-8af5-4565-b5f3-4f880b1d682a ...with a score of=0.0 ...and computing time (do not use these numbers)=0.33921 
+...matched with=232defb8-4d67-4648-8478-77e7772cb6f1 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.332207 
+...matched with=a894f47b-7844-4412-920f-b8440f86e193 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.269513 
+...matched with=68985ee0-91de-44b4-b12e-416e70143ffb ...with a score of=0.0 ...and computing time (do not use these numbers)=0.318991 
+...matched with=4d98156d-8052-451f-bd8f-08bc299e03c6 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.265529 
+...matched with=b038b142-84c5-480e-8f24-ea569b0513f1 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.354714 
+...matched with=41db0fc3-c114-41e1-89ec-9e2611aa7022 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.342235 
+...matched with=2c622eb3-7ab6-4fa8-af20-36513af7bfb6 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.313729 
+...matched with=e752e9fc-480f-4d3e-9e97-413d0293b1c3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.333608
+9b1aa976-d838-11e7-af4e-b8ac6fa02cf9end-to-end time from collector (use last for total time plot 1) 4.596129, wait time (for wt plot 2) 4.291578, max_service_time (use all of them for service time plot 3) 0.304551
+
+9b1aa978-d838-11e7-af4e-b8ac6fa02cf9 has 62 matches!
+9b1aa979-d838-11e7-af4e-b8ac6fa02cf9 has 46 matches!
+9b1aa97a-d838-11e7-af4e-b8ac6fa02cf9 has 43 matches!
+9b1aa97b-d838-11e7-af4e-b8ac6fa02cf9 has 43 matches!
+9b1aa97c-d838-11e7-af4e-b8ac6fa02cf9 has 53 matches!
+9b1aa97d-d838-11e7-af4e-b8ac6fa02cf9 has 49 matches!
+9b1aa97e-d838-11e7-af4e-b8ac6fa02cf9 has 53 matches!
+9b1aa97f-d838-11e7-af4e-b8ac6fa02cf9 has 53 matches!
+9b1aa980-d838-11e7-af4e-b8ac6fa02cf9 has 55 matches!
+9b1aa981-d838-11e7-af4e-b8ac6fa02cf9 has 45 matches!
+9b1aa982-d838-11e7-af4e-b8ac6fa02cf9 has 53 matches!
+9b1aa983-d838-11e7-af4e-b8ac6fa02cf9 has 55 matches!
+9b1aa984-d838-11e7-af4e-b8ac6fa02cf9 has 62 matches!
+9b1aa985-d838-11e7-af4e-b8ac6fa02cf9 has 46 matches!
+9b1aa986-d838-11e7-af4e-b8ac6fa02cf9 has 43 matches!
+9b1aa987-d838-11e7-af4e-b8ac6fa02cf9 has 43 matches!
+9b1aa988-d838-11e7-af4e-b8ac6fa02cf9 has 53 matches!
+9b1aa989-d838-11e7-af4e-b8ac6fa02cf9 has 49 matches!
+9b1aa98a-d838-11e7-af4e-b8ac6fa02cf9 has 44 matches!
+9b1aa98b-d838-11e7-af4e-b8ac6fa02cf9 has 44 matches!
+All results collected for 9b1aa988-d838-11e7-af4e-b8ac6fa02cf9 and the Sorting order is: 
+...matched with=af7a96c6-4e19-490b-a225-51123d3bd7d2 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.36464 
+...matched with=ee70f1aa-547f-47c0-b3ce-d151022886a3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.330417 
+...matched with=79eabc91-a516-4635-9a59-d24482a9ed5d ...with a score of=0.0 ...and computing time (do not use these numbers)=0.317702 
+...matched with=29478bdb-990c-47d8-b1e6-3183f97d5842 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.364769 
+...matched with=945dcaf6-ab2b-4f5a-97b4-1df9d61694f3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.371369 
+...matched with=291d947a-6625-4f95-9bc6-97a49893fdeb ...with a score of=0.0 ...and computing time (do not use these numbers)=0.387428 
+...matched with=0f9f523f-734a-4a0c-9892-a0525a58448c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.355335 
+...matched with=3be1e4cf-5eac-4a01-aa98-caa7eb8221e7 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.34041 
+...matched with=230a8f01-45c7-47c0-a692-9d1128bd512c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.347311 
+...matched with=538e2a65-9dab-424d-bb61-98e21f0cde20 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.386989 
+...matched with=69d551fc-034c-470a-b77c-908896befa90 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.366253 
+...matched with=7dc7553b-71a1-4f78-9fdc-7b13ce8176f5 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.349138 
+...matched with=26554be2-cf10-4fc2-b958-b80cabd3d253 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.395624 
+...matched with=93b047b2-b403-4a08-b6e5-2bf3c7948c4f ...with a score of=0.0 ...and computing time (do not use these numbers)=0.330788 
+...matched with=1de7f318-567f-42d6-a1b1-3add4e80a4ca ...with a score of=0.0 ...and computing time (do not use these numbers)=0.349873 
+...matched with=737ce33e-3956-4325-bea4-b1d8a8c02ead ...with a score of=0.0 ...and computing time (do not use these numbers)=0.366563 
+...matched with=29b47bcf-21b9-4fbd-af29-d855dca5bbce ...with a score of=0.0 ...and computing time (do not use these numbers)=0.414892 
+...matched with=02bcc2b0-628b-42b3-a82c-4749db2322d1 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.383151 
+...matched with=63a6ccba-9069-46d5-b761-c56fa9ff20cf ...with a score of=0.0 ...and computing time (do not use these numbers)=0.382431 
+...matched with=21499b04-87f5-4793-a2e2-7c7a2ca7b942 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.349979 
+...matched with=1d142475-5591-4b06-9890-a13383196fd1 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.364363 
+...matched with=ddc24d2b-245f-47a2-bfba-3d8acc0d4cf0 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.398762 
+...matched with=dc70e0fe-bede-40a5-833a-26156cc5ff76 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.322959 
+...matched with=20c8dba5-4bd3-4f07-baa0-42fd62c9b37e ...with a score of=0.0 ...and computing time (do not use these numbers)=0.392919 
+...matched with=cb0ffdd4-3774-4d9e-861c-86c88c0b3eb9 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.406807 
+...matched with=501a55ca-5d5a-4b6b-bbae-1f2a4b554940 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.373484 
+...matched with=92b8019f-1894-4e12-980f-0a6cfffc9b51 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.383968 
+...matched with=cb34d6f2-27c6-46d2-82c5-05686e439b85 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.397205 
+...matched with=6f1bd1ed-d1a7-41fa-9044-1785d881a039 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.385736 
+...matched with=4d98156d-8052-451f-bd8f-08bc299e03c6 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.357392 
+...matched with=7018fce8-e5fd-4668-b2ad-ebb6806bfd91 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.429131 
+...matched with=942eb7dc-50aa-4a0b-826f-1f9bb16fca67 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.369882 
+...matched with=e877af01-d563-491d-ab3f-515edced30bd ...with a score of=0.0 ...and computing time (do not use these numbers)=0.414133 
+...matched with=1176b934-c079-4673-8a23-14e16346a282 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.360684 
+...matched with=dfeff9c9-22f5-4eaf-9d4e-e2fc419811ee ...with a score of=0.0 ...and computing time (do not use these numbers)=0.429938 
+...matched with=4d0fe552-3a45-49ae-a31c-29eb18285ec0 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.372461 
+...matched with=8e9379ba-8af5-4565-b5f3-4f880b1d682a ...with a score of=0.0 ...and computing time (do not use these numbers)=0.400192 
+...matched with=479f5290-2b15-4fcb-80fc-8669fe8aac2c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.375295 
+...matched with=0f4c1d6c-a510-49c2-9810-4e99c39a01b3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.315564 
+...matched with=73c7b27f-be3f-4def-8da3-e2f5466e21e3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.328979 
+...matched with=11203d37-83b7-4f8f-beeb-cc91b2580a79 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.338541 
+...matched with=01bda761-f1e5-4e3e-8068-861d5fe496fa ...with a score of=0.0 ...and computing time (do not use these numbers)=0.414477 
+...matched with=b038b142-84c5-480e-8f24-ea569b0513f1 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.364055 
+...matched with=6e1fe2f8-5f09-4614-91db-5f65fea897ff ...with a score of=0.0 ...and computing time (do not use these numbers)=0.36365 
+...matched with=e460b9fb-2599-4eb6-aa56-7ba0e46bed5f ...with a score of=0.0 ...and computing time (do not use these numbers)=0.354499 
+...matched with=232defb8-4d67-4648-8478-77e7772cb6f1 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.320082 
+...matched with=fe5650d7-3163-48cc-81f9-b710621e8fbf ...with a score of=0.0 ...and computing time (do not use these numbers)=0.402459 
+...matched with=e752e9fc-480f-4d3e-9e97-413d0293b1c3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.404397 
+...matched with=68985ee0-91de-44b4-b12e-416e70143ffb ...with a score of=0.0 ...and computing time (do not use these numbers)=0.36243 
+...matched with=263592ca-0584-42ff-8d92-0ce8c420d787 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.387009 
+...matched with=2c622eb3-7ab6-4fa8-af20-36513af7bfb6 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.370988 
+...matched with=a894f47b-7844-4412-920f-b8440f86e193 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.408801 
+...matched with=41db0fc3-c114-41e1-89ec-9e2611aa7022 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.434574
+9b1aa988-d838-11e7-af4e-b8ac6fa02cf9end-to-end time from collector (use last for total time plot 1) 4.198151, wait time (for wt plot 2) 3.833511, max_service_time (use all of them for service time plot 3) 0.36464
+
+9b1aa98c-d838-11e7-af4e-b8ac6fa02cf9 has 44 matches!
+9b1aa98d-d838-11e7-af4e-b8ac6fa02cf9 has 44 matches!
+All results collected for 9b1aa98c-d838-11e7-af4e-b8ac6fa02cf9 and the Sorting order is: 
+...matched with=7758e0a9-890a-43e2-b07c-bc0a0a45148c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.334328 
+...matched with=9f2f53bc-f302-4ec3-b6c0-2137cec360a5 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.284596 
+...matched with=0a93f13f-6d98-4ef2-ac03-ea5f54bde575 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.307303 
+...matched with=0fd39ecb-b14c-40e5-8fab-a2f9370fb2d9 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.298581 
+...matched with=b8718609-25fd-4be4-ac8f-924f9f9c3218 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.355628 
+...matched with=a5e73938-c169-4a84-a448-915b17a00511 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.33572 
+...matched with=6fdc7bb2-ac53-4dc0-9f47-a5a9f8ba3056 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.312193 
+...matched with=2c8b5003-5eed-4ee9-97c9-e7464b6b39c8 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.328642 
+...matched with=e8c6da46-8f29-4ef3-ad24-b356353ee237 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.305848 
+...matched with=bb28c0f6-f91a-4f1f-91a8-772f3ed7a3e4 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.336391 
+...matched with=caba0c48-a274-4aa2-a63c-85c79b7ef185 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.322848 
+...matched with=5c659731-de63-4e7c-94af-476df99131f0 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.356711 
+...matched with=163cf12d-2a5b-4dc4-a437-2275977024d3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.411233 
+...matched with=5a14a477-3176-494a-ad37-0a510044d261 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.333806 
+...matched with=abd43aa8-6ef2-4bea-ac3c-5a95439a0b01 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.284396 
+...matched with=2bedda35-33e1-45d4-b206-8ca7d24053d4 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.399226 
+...matched with=26b4c3ca-a2ec-40eb-8111-14209e076c78 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.326214 
+...matched with=84d45eb0-fea6-4262-b740-ace0910fe84b ...with a score of=0.0 ...and computing time (do not use these numbers)=0.325049 
+...matched with=4b84cdf3-4d9b-42dd-a17c-4917b17f0d84 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.297996 
+...matched with=294b47f7-bddc-4877-bb91-6b31997b824a ...with a score of=0.0 ...and computing time (do not use these numbers)=0.310601 
+...matched with=a72504ed-74ec-4fc8-bda4-0eb39a0d1ff4 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.29766 
+...matched with=3bf9c9ff-2acd-4c18-864a-86079e1e6379 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.295603 
+...matched with=37324514-bb6f-42a7-92d7-ab547c2e0796 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.314636 
+...matched with=d8888574-9f7b-4d90-b704-b3768ce6404a ...with a score of=0.0 ...and computing time (do not use these numbers)=0.294597 
+...matched with=53f1b7ec-7308-4fb7-8a3b-421ab524b7de ...with a score of=0.0 ...and computing time (do not use these numbers)=0.337964 
+...matched with=2fd501f1-e433-4580-98e4-e51d06e78411 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.310639 
+...matched with=0686bfb2-4f0c-4517-ad5a-491c2609410d ...with a score of=0.0 ...and computing time (do not use these numbers)=0.300282 
+...matched with=5a4e27d0-1948-436d-8aea-c22649766327 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.293376 
+...matched with=c5aeda63-0c23-4588-b2a4-54afd5e49a63 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.291782 
+...matched with=1bfcb775-7191-4abb-be52-a980fec83938 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.29557 
+...matched with=2dd93e53-b9e6-472e-a9e3-5783b23685cb ...with a score of=0.0 ...and computing time (do not use these numbers)=0.292384 
+...matched with=d2e9dc56-ffd9-467a-aa01-178e61da3fbe ...with a score of=0.0 ...and computing time (do not use these numbers)=0.318573 
+...matched with=b15db1fa-a379-4250-b3ef-ef959261032f ...with a score of=0.0 ...and computing time (do not use these numbers)=0.329584 
+...matched with=7b672a83-1a80-4a3b-bbc4-24088260a78b ...with a score of=0.0 ...and computing time (do not use these numbers)=0.298268 
+...matched with=bffa446b-b86c-492d-9cb0-c83571a0fdf3 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.312665 
+...matched with=1f056d23-4f46-49ee-811a-715aa2a6d04b ...with a score of=0.0 ...and computing time (do not use these numbers)=0.293909 
+...matched with=67d46de4-6b07-404d-aec5-37a73dc30b37 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.329501 
+...matched with=179a1192-e82b-4fd3-a86d-4fa9d59fa89c ...with a score of=0.0 ...and computing time (do not use these numbers)=0.294515 
+...matched with=fe39c87d-1ac8-492d-bee6-b436e136a665 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.27581 
+...matched with=c51c8b43-e584-4f70-9ccc-bb2b77097d08 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.278669 
+...matched with=ecc3d81b-bad4-4c35-9817-8f86c917c62d ...with a score of=0.0 ...and computing time (do not use these numbers)=0.29461 
+...matched with=d9763a57-5d5a-4cf5-9d98-7dd2811512c2 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.284676 
+...matched with=f0a8efa7-0dde-47a6-a91c-6a0ab5174a14 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.276966 
+...matched with=e7921e9f-2ca5-4ce3-9ec3-6dbed383c187 ...with a score of=0.0 ...and computing time (do not use these numbers)=0.29355
+9b1aa98c-d838-11e7-af4e-b8ac6fa02cf9end-to-end time from collector (use last for total time plot 1) 4.439793, wait time (for wt plot 2) 4.105465, max_service_time (use all of them for service time plot 3) 0.334328
