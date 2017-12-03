@@ -3,16 +3,53 @@
 	or 
 	- java -jar target/Fasta transformator-jar-with-dependencies.jar
 2. Usage
+	- start Cassandra Server
+	- create
+	- provide cassandraDB in environment variables CASSANDRA_IP_ADRESS (default="localhost") and CASSANDRA_PORT_ADRESS (default=9042)
 	- Browser --> localhost:1234
 	- click on "Datei auswählen" button and choose a .fasta file
 	- click on "Upload FASTA"
+	 
 3. What happens
 	- first create a ./upload folder and upload the file completely as bytestream to it
 	- go as stream through the lines
 	- when a complete text of a protein is found, then digest
 	- for every peptide fragment
 	- everything is connected as entity and via uuid's
-	- via GSON library create JSON from this and put in a file in ./upload folder and print into console
+	@depricated- via GSON library create JSON from this and put in a file in ./upload folder and print into console
+	- each protein is inserted into the cassandra DB, tables see below
 4. FAQ
 	- roman.zoun@ovgu.de
 	
+	
+CREATE KEYSPACE fasta
+  WITH REPLICATION = { 
+   'class' : 'SimpleStrategy', 
+   'replication_factor' : 1 
+  };
+  
+Cassandra tables:
+
+CREATE TABLE prot_table(
+   id uuid PRIMARY KEY,
+   protein_description text,
+   protein_sequence text,
+   protein_accession text,
+   )
+   
+CREATE TABLE prot_pep(
+   id uuid PRIMARY KEY,
+   protein_id uuid,
+   peptide_id uuid
+   )
+   
+CREATE TABLE pep_spec(
+   peptide_id uuid,
+   spectrum_id uuid,
+   peptide_sequence text,
+   spectrum_charge int,
+   pep_mass double,
+   pep_mz double,
+   mz_values text, --comma seperated double values, the intensities are 1.0 because theoretical spectrum
+   PRIMARY KEY (peptide_id, spectrum_id)
+);
