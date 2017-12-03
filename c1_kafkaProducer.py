@@ -65,6 +65,9 @@ for file in os.listdir(mgf_location):
                     elif "=" in line:
                             metaData+=line+"\n"
 producer.flush()
+producer.send("topic_mgf"
+            , value = "".encode('utf-8')
+            , key = "__final__")
 producer.close()
 
 #Profile block 2

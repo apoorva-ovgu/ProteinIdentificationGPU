@@ -35,6 +35,8 @@ vector1 = []
 vector2 = []
 allMatchesToCompute = []
 
+cass_session = connectToDB()
+
 def loadRealData(mgfid, fastaid):
     global allMatchesToCompute
     # xtandem: m_lM = the M+H + error for an mspectrum
@@ -51,7 +53,7 @@ def loadRealData(mgfid, fastaid):
     del m_plSeq[:]
     del m_pfSeq[:]
 
-    cass_session = connectToDB()
+
     query = "SELECT data FROM mgf.exp_spectrum where id = "+mgfid+";" #\t separated
     select_results = cass_session.execute(query)
     for row in select_results:
@@ -85,7 +87,7 @@ def loadRealData(mgfid, fastaid):
     #f.write('\n' + "m_fI=" +str(m_fI))
     #f.close()
 
-    cass_session.shutdown()
+
 
 def calculateScore():
     global m_lM
@@ -105,6 +107,8 @@ def calculateScore():
                 dot_v1.append( m_plSeq[m_lM.index(x)])
                 dot_v2.append(m_pfSeq[m_fI.index(x)])
     dotProducts = []
+
+    os.environ["CUDA_VISIBLE_DEVICES"] = ""
     tfsess = tf.Session()
     dotProducts = tfsess.run(tf.multiply(dot_v1, dot_v2))
 
@@ -143,6 +147,11 @@ def readFromPairBuilder(scorer_id):
     prof_ctr = 10
 
     for msg in consumer_c3:  #(mgfID, fastaID), load, time in ms
+        if "__final__" in msg.key:
+            print "All received... Shutting down cassandra connection"
+            cass_session.shutdown()
+            sys.exit(0)
+
         if "__init__" not in msg.key:
             prof_ctr-=1
             if prof_ctr<=0:
@@ -176,8 +185,5 @@ def readFromPairBuilder(scorer_id):
             postTime = dt.now()
             sendScores(pairdata[0], pairdata[1], currScore, pairdata[3]+timedelta.total_seconds(postTime-preTime))
 
-f = open('output/output_results.txt','w')
-f.write('Results from c3 scorer:::')
-f.close()
 readFromPairBuilder(sys.argv[1])
 

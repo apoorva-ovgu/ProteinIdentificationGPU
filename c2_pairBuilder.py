@@ -1,7 +1,7 @@
 import uuid
 import re
 import itertools
-import math
+import math, sys
 from datetime import timedelta, datetime as dt
 from operator import itemgetter
 from kafka import KafkaConsumer
@@ -25,6 +25,7 @@ flag_compareAll = False
 fastaSpectrumIDs = []
 mgf_id = "Not Set"
 curr_mgf_pepmass = 0.0
+loadBalancer = 0
 
 filter_pepmass = 100
 filter_intensity = 1.0
@@ -56,68 +57,87 @@ def table_contents(toselect, table_name):
 
     return tempArray
 
-def createPairs(createForId):
-    print "Creating pairs for ",createForId
-    pairs_arr = []
-    if flag_compareAll is True:
-        for element in itertools.product([createForId], fastaSpectrumIDs):
-            pairs_arr.append(element)
-
-    else:
-        selectedFastas = []
-        min_threshold = curr_mgf_pepmass - filter_pepmass
-        max_threshold = curr_mgf_pepmass + filter_pepmass
-        for f in fastaSpectrumIDs:
-            if float(f[1]) > min_threshold and float(f[1]) < max_threshold:
-                selectedFastas.append(f[0])
-                #print "shortlisted: "+str(f)
-        #print selectedFastas
-        for element in itertools.product([createForId], selectedFastas):
-            pairs_arr.append(element)
-
-
+def createPairs(createForId, finalFlag):
     producer_uidMatches = KafkaProducer(bootstrap_servers=['localhost: 9092'])
     producer_uidMatches.flush()
-    try:
+    if finalFlag is True:
         producer_uidMatches.send("uidMatches"
-                      , value=str(len(pairs_arr)).encode('utf-8')
-                      , key= str(createForId).encode('utf-8'))
-        print "Uid message sent- Key ",str(createForId)," Val ",str(len(pairs_arr))
-    except Exception as e:
-        print("Leider exception in producer_uidMatches producer: " + str(e))
+                                 , value="".encode('utf-8')
+                                 , key="__final__".encode('utf-8'))
+        return 0
+    else:
+        print "Creating pairs for ",createForId
+        pairs_arr = []
+        if flag_compareAll is True:
+            for element in itertools.product([createForId], fastaSpectrumIDs):
+                pairs_arr.append(element)
 
-    producer_uidMatches.send("uidMatches"
-                          , value=b'code by apoorva patrikar'
-                          , key=b'__final__')
-    producer_uidMatches.close()
+        else:
+            selectedFastas = []
+            min_threshold = curr_mgf_pepmass - filter_pepmass
+            max_threshold = curr_mgf_pepmass + filter_pepmass
+            for f in fastaSpectrumIDs:
+                if float(f[1]) > min_threshold and float(f[1]) < max_threshold:
+                    selectedFastas.append(f[0])
+                    #print "shortlisted: "+str(f)
+            #print selectedFastas
+            for element in itertools.product([createForId], selectedFastas):
+                pairs_arr.append(element)
 
-    return pairs_arr
 
-def sendPairs(pairsCreated, time):
+
+        try:
+            producer_uidMatches.send("uidMatches"
+                          , value=str(len(pairs_arr)).encode('utf-8')
+                          , key= str(createForId).encode('utf-8'))
+            #print "Uid message sent- Key ",str(createForId)," Val ",str(len(pairs_arr))
+        except Exception as e:
+            print("Leider exception in producer_uidMatches producer: " + str(e))
+
+        producer_uidMatches.send("uidMatches"
+                              , value=b'code by apoorva patrikar'
+                              , key=b'__final__')
+        producer_uidMatches.close()
+
+        return pairs_arr
+
+def sendPairs(pairsCreated, time, finalFlag):
     producer_c2 = KafkaProducer(bootstrap_servers=['localhost: 9092'])
     producer_c2.flush()
-    #producer_c2.send("UIDSandMGF"
-    #              , value=b'code by apoorva patrikar'
-    #              , key=b'__init__')
-    loadBalancer = 0
-    for couple in pairsCreated:
-        couple = couple + (loadBalancer,) + (time,)
-        packagedCouple = str(couple).encode('utf-8')
+    global loadBalancer
 
-        loadBalancer+=1
-        if (loadBalancer > 7): #This what we change for scaling.
-            loadBalancer=0
+    if finalFlag is True:
         try:
+            producer_c2.send("pairs"+str(loadBalancer)
+                             , value="".encode('utf-8')
+                             , key="__final__".encode('utf-8'))
+
+        except Exception as e:
+            print("Exception in closing Kafka producer c2: " + e.message)
+        finally:
+            producer_c2.close()
+            sys.exit(0)
+
+
+    for couple in pairsCreated:
+        loadBalancer += 1
+
+        if (loadBalancer > 8): #This what we change for scaling.
+            loadBalancer = 1
+        try:
+            couple = couple + (loadBalancer,) + (time,)
+            packagedCouple = str(couple).encode('utf-8')
+
             producer_c2.flush()
-            #producer_c2.send("pairs"+str(loadBalancer)
-            producer_c2.send("pairs1"
+            producer_c2.send("pairs"+str(loadBalancer)
+            #producer_c2.send("pairs1"
                                 ,key = "keyforpair".encode('utf-8')
                                  ,value = packagedCouple)
         except Exception as e:
             print("Exception in Kafka producer in pairbuilder: " + e.message)
         finally:
             print "Paired as ", couple
-    producer_c2.close()
+
 
 def storeMGF(mgfid, mgfContent):
     global curr_mgf_pepmass
@@ -160,7 +180,7 @@ def filter1(mgf_received):
     start_flag = False
     fm = ()  # previous line's mz,intensity
     data_arr = mgf_received.split("\n")
-    print "\nNo filter applied, size = "+str(len(data_arr))
+    #print "\nNo filter applied, size = "+str(len(data_arr))
     f_fm = 0.0
     prev_fm = ()
 
@@ -257,7 +277,7 @@ def filter3(mgf_received):
     return filter3_mgf
 
 def filter4(mgf_received):
-    print "Input mgf ",str(mgf_received)
+    #print "Input mgf ",str(mgf_received)
     filter4_mgf = []
     ctr = 0
 
@@ -414,14 +434,20 @@ def run_step2():
 
     readFromFastaDB()
 
-    print("Consumer is ready to listen!",consumer_c2.poll())
+    print("Consumer is ready to listen!")
     for message in consumer_c2:
+        if "__final__" in message.key:
+            print "All pairs for input MGF sent!"
+            createPairs(None, True)
+            sendPairs(None, None, True)
+            sys.exit(0)
+
         if "__init__" not in message.key:
             filteredMGFdata = postProcessMgf(message)
             fullMGFkey = message.key.split("#")
             preTime = dt.now()
             storeMGF(fullMGFkey[0], filteredMGFdata)
-            pairsCreated = createPairs(fullMGFkey[0])
+            pairsCreated = createPairs(fullMGFkey[0], False)
             postTime = dt.now()
             # Profile block 2
             if profile:
@@ -432,7 +458,7 @@ def run_step2():
                 ps.print_stats()
                 print s.getvalue()
             # End of profile block 2
-            sendPairs(pairsCreated, timedelta.total_seconds(postTime-preTime))  ### timedelta:  (days, seconds and microseconds)
+            sendPairs(pairsCreated, timedelta.total_seconds(postTime-preTime), False)  ### timedelta:  (days, seconds and microseconds)
         else:
             print "Initializing.... send again"
 
