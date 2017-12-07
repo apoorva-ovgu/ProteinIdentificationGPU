@@ -42,7 +42,7 @@ public class CassandraStorager {
 				}
 				values = values.deleteCharAt(values.length() - 1);
 				SimpleStatement simpleStatementSpec = new SimpleStatement(
-						"INSERT INTO fasta.pep_spec (peptide_id,spectrum_id,peptide_sequence,spectrum_charge,pep_mass,pep_mz,mz_values, pepmass) VALUES(?, ?, ?, ?,?,?,?)",
+						"INSERT INTO fasta.pep_spec (peptide_id,spectrum_id,peptide_sequence,spectrum_charge,pep_mass,pep_mz,mz_values) VALUES(?, ?, ?, ?,?,?,?)",
 						pep.getUuid(), spec.getUuid(), pep.getSequence(), spec.getCharge(), spec.getPepmass(),
 						spec.getPepMz(), values.toString());
 
