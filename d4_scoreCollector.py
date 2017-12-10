@@ -7,17 +7,6 @@ import threading
 from threading import Thread
 from datetime import timedelta, datetime as dt
 
-import cProfile
-import cStringIO
-import pstats
-
-#Profile block 1
-profile = False
-
-if profile:
-    pr = cProfile.Profile()
-    pr.enable()
-#End of Profile block 1
 
 cluster = Cluster(['127.0.0.1'])
 session = cluster.connect()
@@ -36,7 +25,7 @@ def storeScores(esid, tsid,score):
             (uuid.uuid1(), uuid.UUID('{' + esid + '}'), uuid.UUID('{' + tsid + '}'), float(score))
         )
     except Exception as e:
-        print "error in saving score to cass: "+str(e)
+        print ("error in saving score to cass: "+str(e))
 
 def collect(scoreLine):
     if "__init__" in scoreLine.key:
@@ -63,17 +52,17 @@ def collect(scoreLine):
                 a = dt.now()
                 b =timeDict[receivedScoreFor[0]]
                 c = timedelta.total_seconds(a - b)
-                toprint ="\n"+str(receivedScoreFor[0])+"end-to-end time from collector (use last for total time plot 1) "+ str(c)+ ", wait time (for wt plot 2) "+str(float(c)-float(max_time))+", max_service_time (use all of them for service time plot 3) "+str(max_time)+"\n"
-                print(toprint)
-                f = open('output/big_scorer8_run1.txt', 'a')
-                f.write(toprint)
-                f.close()
+
+            toprint ="\n"+str(receivedScoreFor[0])+"end-to-end time from collector (use last for total time plot 1) "+ str(c)+ ", wait time (for wt plot 2) "+str(float(c)-float(max_time))+", max_service_time (use all of them for service time plot 3) "+str(max_time)+"\n"
+            print(toprint)
+            f = open('output/big_scorer8_run1.txt', 'a')
+            f.write(toprint)
+            f.close()
 
         else:
-            print "Hey, it wasn't in the dictionary!"
+            print ("Hey, it wasn't in the dictionary!")
     except KeyError:
-        print "\nerror in:: receivedScoreFor: ",str(receivedScoreFor), "(data#key)",
-        print "Key does not exist....STALE  DATA"
+        print (str(receivedScoreFor),"Key does not exist....STALE  DATA")
 
 def sortScores(mgfid):
     producer_d4 = KafkaProducer(bootstrap_servers=['localhost: 9092'])
@@ -82,7 +71,7 @@ def sortScores(mgfid):
                      , key=b'__init__')
     tmpArr = []
     toPrint = "\nAll results collected for "+str( mgfid)+ " and the Sorting order is:"
-    print toPrint
+    print (toPrint)
     f = open('output/big_scorer8_run1.txt', 'a')
     f.write(toPrint)
     f.close()
@@ -102,7 +91,7 @@ def sortScores(mgfid):
         toPrint = " \n...matched with="+eachItem.match\
                   +" ...with a score of="+str(eachItem.score)\
                   +" ...and computing time (do not use these numbers)="+str(eachItem.timeReqd)
-        print toPrint
+        print (toPrint)
         f = open('output/big_scorer8_run1.txt', 'a')
         f.write(toPrint)
         f.close()
@@ -114,7 +103,7 @@ def getScores():
     consumer_scores = KafkaConsumer('scores'
                                      ,bootstrap_servers=['localhost:9092']
                                      , group_id='apoorva-thesis')
-    print "Ready to collect scores!"
+    print ("Ready to collect scores!")
     for msg in consumer_scores:
 
         collect(msg)
@@ -124,11 +113,11 @@ def getuidMetadata():
         consumer_uidMatches = KafkaConsumer('uidMatches'
                                             ,bootstrap_servers=['localhost:9092']
                                             , group_id='apoorva-thesis')
-        print "Ready to consume uidMatches"
+        print ("Ready to consume uidMatches")
         for msg in consumer_uidMatches:
             if "__final__" not in msg.key:
                 toPrint = "\n%s has %s matches!" % (msg.key,msg.value)
-                print toPrint
+                print (toPrint)
                 mgfDict[msg.key] = int(msg.value)
                 timeDict[msg.key] =  dt.now()
 
@@ -152,12 +141,3 @@ if __name__ == '__main__':
     Thread(target = getuidMetadata).start()
     Thread(target = getScores).start()
 
-#Profile block 2
-if profile:
-        pr.disable()
-        s = cStringIO.StringIO()
-        sortby = 'cumulative'
-        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-        ps.print_stats()
-        print s.getvalue()
-        #End of profile block 2

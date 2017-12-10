@@ -60,14 +60,14 @@ def loadRealData(mgfid, fastaid):
 
 
     query = "SELECT mz_values FROM fasta.pep_spec " \
-            "where peptide_id = "+ fastaid +" " \
+            "where spectrum_id = "+ fastaid +" " \
             " limit 50 ALLOW FILTERING ;";  # comma separated
-    #print("Fetching--- "+query)
     select_results = cass_session.execute(query)
     for row in select_results:
         m_plSeq_str = str(eval("row.mz_values")).split(",")
         for stof in m_plSeq_str:
-            m_plSeq.append(float(stof))
+            toInsert = float(stof)
+            m_plSeq.append(round(toInsert * 2.5))
             m_pfSeq.append(1)
 
 
@@ -93,13 +93,13 @@ def calculateScore():
 
     print("m_plSeq= ", m_plSeq)
     print("m_pfSeq= ", m_pfSeq)
-    print("Size of m_lM= ", len(m_lM), " and values " ,str(m_lM))
-    print("Size of m_fI= ", len(m_fI), " and values " ,str(m_fI))
+    print("m_lM= " ,str(m_lM))
+    print("m_fI= ",str(m_fI))
 
     for x in m_lM:
         for y in m_plSeq:
             if x == int(y):
-                print("Condition matched!! "+str(x))
+                #print("Condition matched!! "+str(x))
                 dot_v1.append( m_fI[m_lM.index(x)])
                 dot_v2.append(m_pfSeq[m_plSeq.index(x)])
     dotProducts = []
@@ -138,7 +138,7 @@ def readFromPairBuilder(scorer_id):
                                 , bootstrap_servers=['localhost:9092']
                                 , group_id='apoorva-thesis')
     print("Consumer is ready to listen!")
-    temp = 0
+    temp = 1
     currScore = -1
     prof_ctr = 10
 

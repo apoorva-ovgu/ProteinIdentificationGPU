@@ -73,13 +73,10 @@ def createPairs(createForId, finalFlag):
 
             for f in fastaSpectrumIDs:
                 if float(f[1]) > min_threshold and float(f[1]) < max_threshold:
-                    if "801822ee-200c-49a5-a909-dd61f71c8445" in f[0]:#delete this
-                        selectedFastas.append(f[0])
-            print (selectedFastas)
+                    selectedFastas.append(f[0])
+            print ("No. of fastas selected = ",len(selectedFastas))
             for element in itertools.product([createForId], selectedFastas):
                 pairs_arr.append(element)
-
-
 
         try:
             producer_uidMatches.send("uidMatches"
@@ -140,7 +137,9 @@ def sendPairs(pairsCreated, time, finalFlag):
 
 def storeMGF(mgfid, mgfContent):
     global curr_mgf_pepmass
-    print("Received spectrum for ID ", mgfid)
+    toPrint = "Received spectrum for ID ", mgfid
+    print(toPrint)
+
     tmpArr = mgfContent.split("#")    #0:data 1:metadata
     #print tmpArr
     metadata = tmpArr[1].split("\n")
@@ -167,10 +166,9 @@ def readFromFastaDB(minval, maxval):
     cass_session = connectToDB()
     select_results = None
     #delete this and limit
-    query = "SELECT peptide_id,pep_mass FROM fasta.pep_spec" \
+    query = "SELECT spectrum_id,pep_mass FROM fasta.pep_spec" \
             " WHERE pep_mass > "+str(minval)+" and pep_mass < "+str(maxval) +\
-            " AND peptide_sequence ='EWSPPR' "\
-            " limit 2 ALLOW FILTERING ;";
+            " LIMIT 50 ALLOW FILTERING ;";
     print("fetching = "+query)
     try:
         select_results = cass_session.execute(query)
@@ -178,10 +176,9 @@ def readFromFastaDB(minval, maxval):
         print("Couldn't get queries becase:: "+str(e))
     if select_results is not None:
         for row in select_results:
-            stringId = str(eval("row.peptide_id"))
+            stringId = str(eval("row.spectrum_id"))
             stringMass = str(eval("row.pep_mass"))
             fastaSpectrumIDs.append((stringId,stringMass))
-        print("fetched = " , fastaSpectrumIDs)
     cass_session.shutdown()
 
 def filter1(mgf_received):
@@ -302,8 +299,7 @@ def filter4(mgf_received):
         else:
             break
 
-
-    print ("\nFourth filter applied, size = " ,len(filter4_mgf))
+        #print ("\nFourth filter applied, size = " ,len(filter4_mgf))
     #print "after f4= " + str(filter4_mgf)
 
     return  filter4_mgf
@@ -364,7 +360,7 @@ def postProcessMgf(message):
         f3mgf = filter3(f2mgf)  # 8.1 clean_isotopes removes peaks that are probably C13 isotopes
     if f3mgf:
         f4mgf = filter4(f3mgf) #limit the total number of peaks used
-        print("return sorted: "+str(f4mgf))
+        #print("return sorted: "+str(f4mgf))
     if f4mgf:
         f5mgf = filter5(f4mgf) #blurring
     if f5mgf:
