@@ -1,4 +1,0 @@
-Chapter 5. Related Work (small related work section, that focuses on specific work that overlaps with yours)
-
-- Related work for the use case (what other people have implemented this proteomics task with big data frameworks and/or with hardware acceleration)
-- Related work for big data and hardware acceleration (more general than just the proteomics task... perhaps here you just recap a bit on the state of the art for hardware acceleration)
