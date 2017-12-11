@@ -3,6 +3,7 @@ from cassandra.cluster import Cluster
 def connectToDB():
     cluster = Cluster(['127.0.0.1'])
     session = cluster.connect()
+    session.default_timeout = 60.0
     #session.set_keyspace('xtandem')
     return session
 
