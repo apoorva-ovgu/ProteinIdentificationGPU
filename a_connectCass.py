@@ -8,7 +8,7 @@ session = cluster.connect()
 KEYSPACE = "fasta"
 try:
     session.execute("""CREATE KEYSPACE %s WITH replication = 
-        { 'class': 'SimpleStrategy', 'replication_factor': '1' }""" % KEYSPACE)
+        { 'class': 'SimpleStrategy', 'replication_factor': 1 }""" % KEYSPACE)
     session.set_keyspace(KEYSPACE)
 except Exception as e:
     print("Error creating keyspace: "+str(e))
@@ -47,7 +47,7 @@ finally:
 #     print("Table fasta.prot_pep (peptide) successfully created.")
 
 try:
-    #theo_spectrum
+    #theo_spectrum... Comment on mzvalues: --comma seperated double values, the intensities are 1.0 because theoretical spectrum
      session.execute("""
           CREATE TABLE fasta.pep_spec(
               peptide_id uuid,
@@ -56,9 +56,10 @@ try:
               spectrum_charge int,
               pep_mass double,
               pep_mz double,
-              mz_values text, --comma seperated double values, the intensities are 1.0 because theoretical spectrum
-              PRIMARY KEY (pep_mass, spectrum_id) 
-              WITH CLUSTERING ORDER BY (pep_mass) 
+              mz_values text, 
+              PRIMARY KEY (spectrum_id, pep_mass)
+           )
+           WITH CLUSTERING ORDER BY (pep_mass DESC) 
             """)
 
 except Exception as e:
