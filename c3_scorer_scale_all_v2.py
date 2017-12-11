@@ -96,6 +96,7 @@ def calculateScore():
     print("m_lM= " ,str(m_lM))
     print("m_fI= ",str(m_fI))
 
+
     for x in m_lM:
         for y in m_plSeq:
             if x == int(y):

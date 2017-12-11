@@ -8,19 +8,20 @@ from kafka import KafkaConsumer
 from kafka import KafkaProducer
 from dbOperations import connectToDB
 
-import cProfile
-import pstats
-
 
 flag_compareAll = False
 fastaSpectrumIDs = []
 mgf_id = "Not Set"
 curr_mgf_pepmass = 0.0
+curr_mgf_charge = 0
 loadBalancer = 0
 
 filter_pepmass = 0.0
 filter_intensity = 1.0
 filter_maxPeaks = 50
+
+protonwt = 1.00728
+neutronwt= 1.00335
 
 def filldb(mgf_id, mgf_metadata, mgf_title, mgf_mass, mgf_charge,mgf_sequence):
     session = connectToDB()
@@ -50,6 +51,9 @@ def table_contents(toselect, table_name):
 
 def createPairs(createForId, finalFlag):
     filter_pepmass = curr_mgf_pepmass/1000
+    global protonwt
+    global neutronwt
+
     producer_uidMatches = KafkaProducer(bootstrap_servers=['localhost: 9092'])
     producer_uidMatches.flush()
     if finalFlag is True:
@@ -66,30 +70,48 @@ def createPairs(createForId, finalFlag):
 
         else:
             selectedFastas = []
+            #print("curr_mgf_pepmass is ", curr_mgf_pepmass)
+            m_dmh = round(((curr_mgf_pepmass - protonwt) * curr_mgf_charge) + protonwt,3)
+            #print("m_dmh is ", m_dmh)
+            #print("Equation = ((",curr_mgf_pepmass,"-",protonwt,") * ",curr_mgf_charge,")+",protonwt)
 
-            min_threshold = round((curr_mgf_pepmass - filter_pepmass),4)
-            max_threshold = round((curr_mgf_pepmass + filter_pepmass),4)
+            if curr_mgf_pepmass > 1000:
+                m_dmh -= neutronwt
+
+            min_threshold = m_dmh - (m_dmh / 10000) + 1.00769
+            max_threshold = m_dmh + (m_dmh / 10000) + 1.00769
+
+
+            #min_threshold = round((curr_mgf_pepmass - filter_pepmass),4)
+            #max_threshold = round((curr_mgf_pepmass + filter_pepmass),4)
+
+
             readFromFastaDB(min_threshold, max_threshold )
 
-            for f in fastaSpectrumIDs:
-                if float(f[1]) > min_threshold and float(f[1]) < max_threshold:
-                    selectedFastas.append(f[0])
-            print ("No. of fastas selected = ",len(selectedFastas))
-            for element in itertools.product([createForId], selectedFastas):
-                pairs_arr.append(element)
+            if len(fastaSpectrumIDs)==0:
+                print ("No pairs were found...")
+                return None
+            else:
 
-        try:
-            producer_uidMatches.send("uidMatches"
-                          , value=str(len(pairs_arr)).encode('utf-8')
-                          , key= str(createForId).encode('utf-8'))
-            #print "Uid message sent- Key ",str(createForId)," Val ",str(len(pairs_arr))
-        except Exception as e:
-            print("Leider exception in producer_uidMatches producer: " + str(e))
+                for f in fastaSpectrumIDs:
 
-        producer_uidMatches.send("uidMatches"
-                              , value=b'code by apoorva patrikar'
-                              , key=b'__final__')
-        producer_uidMatches.close()
+                    if float(f[1]) > min_threshold and float(f[1]) < max_threshold:
+                        selectedFastas.append(f[0])
+                print ("No. of fastas selected = ",len(selectedFastas))
+                for element in itertools.product([createForId], selectedFastas):
+                    pairs_arr.append(element)
+
+                try:
+                    producer_uidMatches.send("uidMatches"
+                                  , value=str(len(pairs_arr)).encode('utf-8')
+                                  , key= str(createForId).encode('utf-8'))
+                except Exception as e:
+                    print("Leider exception in producer_uidMatches producer: " + str(e))
+
+                producer_uidMatches.send("uidMatches"
+                                      , value=b'code by apoorva patrikar'
+                                      , key=b'__final__')
+                producer_uidMatches.close()
 
         return pairs_arr
 
@@ -136,6 +158,8 @@ def sendPairs(pairsCreated, time, finalFlag):
 
 def storeMGF(mgfid, mgfContent):
     global curr_mgf_pepmass
+    global curr_mgf_charge
+
     toPrint = "Received spectrum for ID ", mgfid
     print(toPrint)
 
@@ -151,11 +175,15 @@ def storeMGF(mgfid, mgfContent):
            title = md.split("=",1)[1]
         elif "PEPMASS" in md:
             pepmassAndIntensity = md.split("=", 1)[1]
-            p = re.compile('(\w+)')
+            p = re.compile('(\d+.*\d*)[ \t](\d+.*\d*)')
             m = p.match(pepmassAndIntensity)
             curr_mgf_pepmass = float(m.group(1))
         elif "CHARGE" in md:
             charge = md.split("=", 1)[1]
+            p = re.compile('(\d+)(\+)')
+            m = p.match(charge)
+            curr_mgf_charge = float(m.group(1))
+
     try:
         filldb(uuid.UUID('{' + mgfid + '}'), tmpArr[1], title, curr_mgf_pepmass, charge,tmpArr[0])
     except Exception as e:
@@ -164,10 +192,12 @@ def storeMGF(mgfid, mgfContent):
 def readFromFastaDB(minval, maxval):
     cass_session = connectToDB()
     select_results = None
+    global fastaSpectrumIDs
+
     #delete this and limit
-    query = "SELECT spectrum_id,pep_mass FROM fasta.pep_spec" \
+    query = "SELECT spectrum_id,pep_mass,peptide_sequence FROM fasta.pep_spec" \
             " WHERE pep_mass > "+str(minval)+" and pep_mass < "+str(maxval) +\
-            " LIMIT 50 ALLOW FILTERING ;";
+            "  ALLOW FILTERING ;";
     print("fetching = "+query)
     try:
         select_results = cass_session.execute(query)
@@ -396,7 +426,8 @@ def run_step2():
             pairsCreated = createPairs(fullMGFkey[0], False)
             postTime = dt.now()
 
-            sendPairs(pairsCreated, timedelta.total_seconds(postTime-preTime), False)  ### timedelta:  (days, seconds and microseconds)
+            if pairsCreated is not None:
+                sendPairs(pairsCreated, timedelta.total_seconds(postTime-preTime), False)  ### timedelta:  (days, seconds and microseconds)
         else:
             print ("Initializing.... send again")
 

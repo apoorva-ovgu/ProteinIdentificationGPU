@@ -3,8 +3,9 @@ from cassandra.cluster import Cluster
 def connectToDB():
     cluster = Cluster(['127.0.0.1'])
     session = cluster.connect()
-    session.default_timeout = 60.0
     #session.set_keyspace('xtandem')
+    session.default_timeout = None
+    session.default_fetch_size = 200
     return session
 
 def viewTable(toselect, table_name):
@@ -24,7 +25,7 @@ def viewTable(toselect, table_name):
     cass_session.shutdown()
 
     for entry in tempArray:
-        print str(entry)
+        print (str(entry))
 
 def truncTable(table_name):
     cass_session = connectToDB()
@@ -32,9 +33,9 @@ def truncTable(table_name):
     try:
         cass_session.execute(query)
     except Exception as e:
-        print "Table "+table_name+" not truncated.....!\n"+str(e)
+        print ("Table "+table_name+" not truncated.....!\n"+str(e))
     finally:
-        print "Table " + table_name + " truncated successfully."
+        print ("Table " + table_name + " truncated successfully.")
 
 def dropTable(table_name):
     cass_session = connectToDB()
@@ -42,9 +43,9 @@ def dropTable(table_name):
     try:
         cass_session.execute(query)
     except Exception as e:
-        print "Table " + table_name + " not dropped.....!\n" + str(e)
+        print ("Table " + table_name + " not dropped.....!\n" + str(e))
     finally:
-        print "Table " + table_name + " dropped successfully."
+        print ("Table " + table_name + " dropped successfully.")
 
 #truncTable('xtandem.exp_spectrum')
 #dropTable('xtandem.exp_spectrum')
