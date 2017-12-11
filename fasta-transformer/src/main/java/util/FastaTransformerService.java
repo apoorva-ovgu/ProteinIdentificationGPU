@@ -13,6 +13,7 @@ import org.expasy.mzjava.proteomics.mol.digest.ProteinDigester;
 
 import entities.FastaPeptide;
 import entities.FastaProtein;
+import java.util.stream.Collectors;
 
 public class FastaTransformerService {
 
@@ -25,7 +26,7 @@ public class FastaTransformerService {
 		List<Peptide> list = digester.digest(prot);
 		Set<FastaPeptide> result = new HashSet<>();
 		
-		
+		list = list.stream().filter(it->(it.toString().length()>=5&&it.toString().length()<=50)).collect(Collectors.toList());
 		for (Peptide pep : list) {
 
 			FastaPeptide fPep = new FastaPeptide();
