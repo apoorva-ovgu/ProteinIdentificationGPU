@@ -87,15 +87,18 @@ def sortScores(mgfid):
         if f1==0:
             max_time = eachItem.timeReqd
             f1=1
-        mgfClassInstances.remove(eachItem)
+
         toPrint = " \n...matched with="+eachItem.match\
                   +" ...with a score of="+str(eachItem.score)\
                   +" ...and computing time (do not use these numbers)="+str(eachItem.timeReqd)
+
         print (toPrint)
         f = open('output/big_scorer8_run1.txt', 'a')
         f.write(toPrint)
         f.close()
 
+        mgfClassInstances.remove(eachItem)
+        
     sendResults(producer_d4, mgfid, toPrint)
     return max_time
 
@@ -115,7 +118,7 @@ def getuidMetadata():
                                             , group_id='apoorva-thesis')
         print ("Ready to consume uidMatches")
         for msg in consumer_uidMatches:
-            if "__final__" not in msg.key:
+            if "__final__" not in msg.key.decode("'utf-8'"):
                 toPrint = "\n%s has %s matches!" % (msg.key,msg.value)
                 print (toPrint)
                 mgfDict[msg.key] = int(msg.value)
