@@ -16,48 +16,49 @@ finally:
     print("Keyspace successfully created and set to default.")
 
 
-try:
-    #protein
-    session.execute("""
-           CREATE TABLE fasta.prot_table(
-           id uuid PRIMARY KEY,
-           protein_description text,
-           protein_sequence text,
-           protein_accession text,
-           );
-            """)
-except Exception as e:
-    print("Error creating protein: " + str(e))
-finally:
-    print("Table fasta.prot_table successfully created.")
+# try:
+#     #protein
+#     session.execute("""
+#            CREATE TABLE fasta.prot_table(
+#            id uuid PRIMARY KEY,
+#            protein_description text,
+#            protein_sequence text,
+#            protein_accession text,
+#            );
+#             """)
+# except Exception as e:
+#     print("Error creating protein: " + str(e))
+# finally:
+#     print("Table fasta.prot_table successfully created.")
 
-try:
-    #peptide
-    session.execute("""
-            CREATE TABLE fasta.prot_pep(
-           id uuid PRIMARY KEY,
-           protein_id uuid,
-           peptide_id uuid
-           );
-            """)
-
-except Exception as e:
-    print("Error creating peptide: " + str(e))
-finally:
-    print("Table fasta.prot_pep (peptide) successfully created.")
+# try:
+#     #peptide
+#     session.execute("""
+#             CREATE TABLE fasta.prot_pep(
+#            id uuid PRIMARY KEY,
+#            protein_id uuid,
+#            peptide_id uuid
+#            );
+#             """)
+#
+# except Exception as e:
+#     print("Error creating peptide: " + str(e))
+# finally:
+#     print("Table fasta.prot_pep (peptide) successfully created.")
 
 try:
     #theo_spectrum
      session.execute("""
           CREATE TABLE fasta.pep_spec(
-           peptide_id uuid,
-           spectrum_id uuid,
-           peptide_sequence text,
-           spectrum_charge int,
-           pep_mass double,
-           pep_mz double,
-           mz_values text, --comma seperated double values, the intensities are 1.0 because theoretical spectrum
-           PRIMARY KEY (peptide_id, spectrum_id));
+              peptide_id uuid,
+              spectrum_id uuid,
+              peptide_sequence text,
+              spectrum_charge int,
+              pep_mass double,
+              pep_mz double,
+              mz_values text, --comma seperated double values, the intensities are 1.0 because theoretical spectrum
+              PRIMARY KEY (pep_mass, spectrum_id) 
+              WITH CLUSTERING ORDER BY (pep_mass) 
             """)
 
 except Exception as e:
