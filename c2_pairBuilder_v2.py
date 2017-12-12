@@ -115,10 +115,10 @@ def sendPairs(pairsCreated, time, finalFlag):
             #sys.exit(0)
     else:
         for couple in pairsCreated:
-            #loadBalancer += 1
-            #if (loadBalancer > 8): #This what we change for scaling.
-             #   loadBalancer = 1
-            loadBalancer = 1
+            loadBalancer += 1
+            if (loadBalancer > 8): #This what we change for scaling.
+                loadBalancer = 1
+            #loadBalancer = 1
             try:
                 couple = couple + (loadBalancer,) + (time,)
                 packagedCouple = str(couple).encode('utf-8')
