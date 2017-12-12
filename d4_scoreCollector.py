@@ -1,68 +1,62 @@
 import uuid
-from cassandra.cluster import Cluster
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
 from mgfClassFile import mgfClass
-import threading
-from threading import Thread
+import multiprocessing as mp
+from multiprocessing import Process, Manager
+from dbOperations import connectToDB
 from datetime import timedelta, datetime as dt
-
-
-cluster = Cluster(['127.0.0.1'])
-session = cluster.connect()
-session.set_keyspace('scores')
-
-mgfClassInstances = []
-mgfDict = {}
-receivedMatches = 0
-timeDict = {}
 
 def storeScores(esid, tsid,score):
     try:
+        session = connectToDB()
+        session.set_keyspace('scores')
         session.execute(
             """INSERT INTO scores.psm (id, exp_spectrum_uid, theo_spectrum_uid, score)
             VALUES (%s, %s, %s, %s)""",
             (uuid.uuid1(), uuid.UUID('{' + esid + '}'), uuid.UUID('{' + tsid + '}'), float(score))
         )
+        session.shutdown()
+
     except Exception as e:
         print ("error in saving score to cass: "+str(e))
 
-def collect(scoreLine):
-    if "__init__" in scoreLine.key:
-        return
-    receivedScore = scoreLine.value
-    receivedScoreFor = scoreLine.key.split("#")
 
-    #print "--ignore-- ",receivedScore," ",str(receivedScoreFor)
-    try:
-        if receivedScoreFor[0] in mgfDict:
-            mgfDict[receivedScoreFor[0]] = mgfDict[receivedScoreFor[0]]-1
-            mgfClassObj = \
-                mgfClass(receivedScoreFor[0] #name
-                         ,receivedScoreFor[1] #matchedWith
-                         , receivedScore  #score
-                          ,mgfDict[receivedScoreFor[0]] #remainingcomparisons
-                         ,receivedScoreFor[2] #timeRequired
-                         )
-            mgfClassInstances.append(mgfClassObj)
-            storeScores(receivedScoreFor[0], receivedScoreFor[1], receivedScore)
+def collect(scoreLine,mgfDict,timeDict):
+    receivedScore = scoreLine.value.decode('utf-8')
+    receivedScoreFor = scoreLine.key.decode('utf-8').split("#")
+    lookFor = receivedScoreFor[0]
 
-            if int(mgfDict[receivedScoreFor[0]]) == 0:
+    if lookFor in mgfDict:
+
+        mgfDict[lookFor] = mgfDict[receivedScoreFor[0]]-1
+        mgfClassObj = \
+            mgfClass(lookFor #name
+                     ,receivedScoreFor[1] #matchedWith
+                     , receivedScore  #score
+                      ,mgfDict[lookFor] #remainingcomparisons
+                     ,receivedScoreFor[2] #timeRequired
+                     )
+        mgfClassInstances.append(mgfClassObj)
+        #print("----", str(mgfClassInstances))
+        storeScores(lookFor, receivedScoreFor[1], receivedScore)
+        if int(mgfDict[receivedScoreFor[0]]) == 0:
                 max_time = sortScores(receivedScoreFor[0])
+                #print("***", str(max_time))
                 a = dt.now()
-                b =timeDict[receivedScoreFor[0]]
+                #print("b is ",timeDict[lookFor]," of type ",type(timeDict[lookFor]))
+                b = timeDict[lookFor]
                 c = timedelta.total_seconds(a - b)
 
-            toprint ="\n"+str(receivedScoreFor[0])+"end-to-end time from collector (use last for total time plot 1) "+ str(c)+ ", wait time (for wt plot 2) "+str(float(c)-float(max_time))+", max_service_time (use all of them for service time plot 3) "+str(max_time)+"\n"
-            print(toprint)
-            f = open('output/big_scorer8_run1.txt', 'a')
-            f.write(toprint)
-            f.close()
-
-        else:
-            print ("Hey, it wasn't in the dictionary!")
-    except KeyError:
-        print (str(receivedScoreFor),"Key does not exist....STALE  DATA")
+                toprint ="\n"+str(lookFor)+"end-to-end time from collector (use last for total time plot 1) "+ str(c)+ ", wait time (for wt plot 2) "+str(float(c)-float(max_time))+", max_service_time (use all of them for service time plot 3) "+str(max_time)+"\n"
+                print(toprint)
+                f = open('output/big_scorer8_run1.txt', 'a')
+                f.write(toprint)
+                f.close()
+        #else:
+        #    print("kichkich")
+    else:
+        print ("Hey, it wasn't in the dictionary!")
 
 def sortScores(mgfid):
     producer_d4 = KafkaProducer(bootstrap_servers=['localhost: 9092'])
@@ -98,41 +92,44 @@ def sortScores(mgfid):
         f.close()
 
         mgfClassInstances.remove(eachItem)
-        
+
     sendResults(producer_d4, mgfid, toPrint)
     return max_time
 
-def getScores():
-    consumer_scores = KafkaConsumer('scores'
-                                     ,bootstrap_servers=['localhost:9092']
-                                     , group_id='apoorva-thesis')
+def getScores(mgfDict,timeDict):
+    consumer_scores = KafkaConsumer("scores"
+                                     ,bootstrap_servers=["localhost:9092"]
+                                     )
     print ("Ready to collect scores!")
     for msg in consumer_scores:
+        if "__init__" not in msg.key.decode('utf-8'):
+            collect(msg, mgfDict,timeDict)
 
-        collect(msg)
-
-def getuidMetadata():
+def getuidMetadata(mgfDict,timeDict):
     try:
-        consumer_uidMatches = KafkaConsumer('uidMatches'
-                                            ,bootstrap_servers=['localhost:9092']
-                                            , group_id='apoorva-thesis')
-        print ("Ready to consume uidMatches")
-        for msg in consumer_uidMatches:
-            if "__final__" not in msg.key.decode("'utf-8'"):
-                toPrint = "\n%s has %s matches!" % (msg.key,msg.value)
-                print (toPrint)
-                mgfDict[msg.key] = int(msg.value)
-                timeDict[msg.key] =  dt.now()
+        consumer_uidMatches = KafkaConsumer("numofmatches"
+                                            ,bootstrap_servers=["localhost:9092"]
 
-                f = open('output/big_scorer8_run1.txt', 'a')
-                f.write(toPrint)
-                f.close()
-            #else:
-            #    print "Closing metadata listener"
-            #    consumer_uidMatches.close()
-            #    return 0
+                                            )
+        consumer_uidMatches.subscribe("numofmatches")
     except Exception as e:
-        print("Exception in Kafka consumer in uidMatches Collector: "+ e.message)
+        print("Exception in Kafka consumer in numofmatches Collector: " + e.message)
+    print("Ready to consume numofmatches")
+    for msg in consumer_uidMatches:
+        #print(str(msg))
+        key1 = msg.key.decode('utf-8')
+        val1 = msg.value.decode('utf-8')
+        if "__final__" not in key1 and "__init__" not in key1:
+            key2 = key1.split("=")[1]
+            val2 = val1.split("=")[1]
+            toPrint = "%s has %s matches!\n" % (val2,key2)
+            print (toPrint)
+
+            mgfDict[val2] = int(key2)
+            timeDict[val2] = dt.now()
+            f = open('output/big_scorer8_run1.txt', 'a')
+            f.write(toPrint)
+            f.close()
 
 def sendResults(producer_d4, keyToSend, valueToSend):
     producer_d4.send("results"
@@ -140,7 +137,20 @@ def sendResults(producer_d4, keyToSend, valueToSend):
                   , key = keyToSend.encode('utf-8'))
 
 
-if __name__ == '__main__':
-    Thread(target = getuidMetadata).start()
-    Thread(target = getScores).start()
 
+mgfClassInstances = []
+mgfDict = {}
+receivedMatches = 0
+timeDict = {}
+
+if __name__ == '__main__':
+    manager = Manager()
+    mgfDict = manager.dict()
+    timeDict = manager.dict()
+
+    t1 = mp.Process(target=getuidMetadata, args=(mgfDict,timeDict,))
+    t1.start()
+    t2 = mp.Process(target=getScores, args=(mgfDict,timeDict,))
+    t2.start()
+    t1.join()
+    t2.join()

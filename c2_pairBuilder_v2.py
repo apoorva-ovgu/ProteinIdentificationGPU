@@ -1,7 +1,7 @@
 import uuid
 import re
 import itertools
-import math, sys
+import math, sys, time
 from datetime import timedelta, datetime as dt
 from operator import itemgetter
 from kafka import KafkaConsumer
@@ -54,12 +54,15 @@ def createPairs(createForId, finalFlag):
     global protonwt
     global neutronwt
 
-    producer_uidMatches = KafkaProducer(bootstrap_servers=['localhost: 9092'])
-    producer_uidMatches.flush()
+    producer_uidMatches = KafkaProducer(bootstrap_servers=["localhost: 9092"])
+    producer_uidMatches.send("numofmatches"
+                  , value=b'code by apoorva patrikar'
+                  , key=b'__init__')
+
     if finalFlag is True:
-        producer_uidMatches.send("uidMatches"
-                                 , value="".encode('utf-8')
-                                 , key="__final__".encode('utf-8'))
+        producer_uidMatches.send("numofmatches"
+                                 , value="coded by apoorva".encode('utf-8')
+                                 , key="__final__woo".encode('utf-8'))
         return 0
     else:
         print ("Creating pairs for ",createForId)
@@ -67,52 +70,32 @@ def createPairs(createForId, finalFlag):
         if flag_compareAll is True:
             for element in itertools.product([createForId], fastaSpectrumIDs):
                 pairs_arr.append(element)
-
         else:
             selectedFastas = []
-            #print("curr_mgf_pepmass is ", curr_mgf_pepmass)
             m_dmh = round(((curr_mgf_pepmass - protonwt) * curr_mgf_charge) + protonwt,3)
-            #print("m_dmh is ", m_dmh)
-            #print("Equation = ((",curr_mgf_pepmass,"-",protonwt,") * ",curr_mgf_charge,")+",protonwt)
-
             if curr_mgf_pepmass > 1000:
                 m_dmh -= neutronwt
-
             min_threshold = m_dmh - (m_dmh / 10000) + 1.00769
             max_threshold = m_dmh + (m_dmh / 10000) + 1.00769
-
-
-            #min_threshold = round((curr_mgf_pepmass - filter_pepmass),4)
-            #max_threshold = round((curr_mgf_pepmass + filter_pepmass),4)
-
-
             readFromFastaDB(min_threshold, max_threshold )
+
+            lenVal = "len=" + str(len(fastaSpectrumIDs))
+            keyVal = "val=" + str(createForId)
+            producer_uidMatches.send("numofmatches"
+                                     , value=bytes(keyVal, encoding='utf-8')
+                                     , key=bytes(lenVal, encoding='utf-8'))
+            producer_uidMatches.flush()
 
             if len(fastaSpectrumIDs)==0:
                 print ("No pairs were found...")
                 return None
             else:
-
                 for f in fastaSpectrumIDs:
-
                     if float(f[1]) > min_threshold and float(f[1]) < max_threshold:
                         selectedFastas.append(f[0])
-                print ("No. of fastas selected = ",len(selectedFastas))
                 for element in itertools.product([createForId], selectedFastas):
                     pairs_arr.append(element)
-
-                try:
-                    producer_uidMatches.send("uidMatches"
-                                  , value=str(len(pairs_arr)).encode('utf-8')
-                                  , key= str(createForId).encode('utf-8'))
-                except Exception as e:
-                    print("Leider exception in producer_uidMatches producer: " + str(e))
-
-                producer_uidMatches.send("uidMatches"
-                                      , value=b'code by apoorva patrikar'
-                                      , key=b'__final__')
-                producer_uidMatches.close()
-
+                print("No. of fastas selected = ", len(selectedFastas))
         return pairs_arr
 
 def sendPairs(pairsCreated, time, finalFlag):
@@ -120,48 +103,43 @@ def sendPairs(pairsCreated, time, finalFlag):
     global loadBalancer
 
     producer_c2 = KafkaProducer(bootstrap_servers=['localhost: 9092'])
-    producer_c2.flush()
-
-
     if finalFlag is True:
         try:
             producer_c2.send("pairs"+str(loadBalancer)
                              , value="".encode('utf-8')
                              , key="__final__".encode('utf-8'))
-
         except Exception as e:
             print("Exception in closing Kafka producer c2: " + e.message)
         finally:
             producer_c2.close()
-            sys.exit(0)
-
-
-    for couple in pairsCreated:
-        loadBalancer += 1
-
-        if (loadBalancer > 8): #This what we change for scaling.
+            #sys.exit(0)
+    else:
+        for couple in pairsCreated:
+            #loadBalancer += 1
+            if (loadBalancer > 8): #This what we change for scaling.
+                loadBalancer = 1
             loadBalancer = 1
-        try:
-            couple = couple + (loadBalancer,) + (time,)
-            packagedCouple = str(couple).encode('utf-8')
+            try:
+                couple = couple + (loadBalancer,) + (time,)
+                packagedCouple = str(couple).encode('utf-8')
 
-            producer_c2.flush()
-            producer_c2.send("pairs"+str(loadBalancer)
-            #producer_c2.send("pairs1"
-                                ,key = "keyforpair".encode('utf-8')
-                                 ,value = packagedCouple)
-        except Exception as e:
-            print("Exception in Kafka producer in pairbuilder: " + e.message)
-        finally:
-            print ("Paired as ", couple)
 
+                producer_c2.send("pairs"+str(loadBalancer)
+                                    ,key = "keyforpair".encode('utf-8')
+                                     ,value = packagedCouple)
+                producer_c2.flush()
+
+            except Exception as e:
+                print("Exception in Kafka producer in pairbuilder: " + e.message)
+            finally:
+                print ("Paired as ", couple)
 
 def storeMGF(mgfid, mgfContent):
     global curr_mgf_pepmass
     global curr_mgf_charge
 
-    toPrint = "Received spectrum for ID ", mgfid
-    print(toPrint)
+    #toPrint = "Received spectrum for ID ", mgfid
+    #print(toPrint)
 
     tmpArr = mgfContent.split("#")    #0:data 1:metadata
     #print tmpArr
@@ -197,7 +175,7 @@ def readFromFastaDB(minval, maxval):
     #delete this and limit
     query = "SELECT spectrum_id,pep_mass,peptide_sequence FROM fasta.pep_spec" \
             " WHERE pep_mass > "+str(minval)+" and pep_mass < "+str(maxval) +\
-            "  ALLOW FILTERING ;";
+            " ALLOW FILTERING ;";
     print("fetching = "+query)
     try:
         select_results = cass_session.execute(query)
@@ -402,28 +380,30 @@ def run_step2():
     consumer_c2 = KafkaConsumer('topic_mgf'
                                 ,bootstrap_servers=['localhost:9092']
                                 , group_id='apoorva-thesis')
-                                #, auto_offset_reset='earliest')
-    #session = connectToDB()
-    #session.execute("""TRUNCATE table mgf.exp_spectrum;  """)
-    #session.shutdown()
+    session = connectToDB()
+    session.execute("""TRUNCATE table mgf.exp_spectrum;  """)
+    session.execute("""TRUNCATE table scores.psm;  """)
+    session.shutdown()
 
     #print("Going to read from fastadb")
     #readFromFastaDB()
 
     print("Consumer is ready to listen!")
     for message in consumer_c2:
-        if b'__final__' in message.key:
+        if '__final__' in message.key.decode('utf-8'):
             print ("All pairs for input MGF sent!")
+
             createPairs(None, True)
             sendPairs(None, None, True)
-            sys.exit(0)
+            #sys.exit(0)
 
-        if b'__init__' not in message.key:
+        elif '__init__' not in message.key.decode('utf-8'):
             filteredMGFdata = postProcessMgf(message)
             fullMGFkey = message.key.decode('utf-8').split("#")
             preTime = dt.now()
             storeMGF(fullMGFkey[0], filteredMGFdata)
             pairsCreated = createPairs(fullMGFkey[0], False)
+
             postTime = dt.now()
 
             if pairsCreated is not None:

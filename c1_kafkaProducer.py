@@ -3,8 +3,9 @@ import uuid
 import re
 import os
 import cProfile
-import cStringIO
+#import cStringIO
 import pstats
+from datetime import timedelta, datetime as dt
 
 #Profile block 1
 profile = False
@@ -45,10 +46,10 @@ for file in os.listdir(mgf_location):
                             fullSpectra_s+="#"+metaData
                             producer.send("topic_mgf"
                                           , value = fullSpectra_s.encode('utf-8')
-                                          , key = generatedID)
+                                          , key = generatedID.encode('utf-8'))
                         except Exception as e:
                             print("Leider exception in Kafka producer: " + str(e))
-                        print("Sent spectra: " + generatedID)
+                        print("Sent spectra: " + generatedID+ "at "+str(dt.now()))
                         fullSpectra_s = ""
                         metaData = ""
 
@@ -64,18 +65,10 @@ for file in os.listdir(mgf_location):
 
                     elif "=" in line:
                             metaData+=line+"\n"
-producer.flush()
+
 producer.send("topic_mgf"
-            , value = "".encode('utf-8')
-            , key = "__final__")
+            , value = "coded by apoorva".encode('utf-8')
+            , key = "__final__".encode('utf-8'))
+producer.flush()
 producer.close()
 
-#Profile block 2
-if profile:
-        pr.disable()
-        s = cStringIO.StringIO()
-        sortby = 'cumulative'
-        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-        ps.print_stats()
-        print s.getvalue()
-#End of profile block 2

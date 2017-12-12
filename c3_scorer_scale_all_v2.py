@@ -78,8 +78,6 @@ def loadRealData(mgfid, fastaid):
     #f.write('\n' + "m_fI=" +str(m_fI))
     #f.close()
 
-
-
 def calculateScore():
     global m_lM
     global m_fI
@@ -91,10 +89,10 @@ def calculateScore():
     dot_v1 = []
     dot_v2 = []
 
-    print("m_plSeq= ", m_plSeq)
-    print("m_pfSeq= ", m_pfSeq)
-    print("m_lM= " ,str(m_lM))
-    print("m_fI= ",str(m_fI))
+    # print("m_plSeq= ", m_plSeq)
+    # print("m_pfSeq= ", m_pfSeq)
+    # print("m_lM= " ,str(m_lM))
+    # print("m_fI= ",str(m_fI))
 
 
     for x in m_lM:
@@ -118,20 +116,23 @@ def calculateScore():
 
 def sendScores(mgfid, fastaid, currScore, timeReqd):
     producer_c3 = KafkaProducer(bootstrap_servers=['localhost: 9092'])
-    producer_c3.flush()
-    formedKey = mgfid+"#"+fastaid+"#"+str(timeReqd)
-    formedKey = str(formedKey.encode('utf-8'))
-    #print "Sent .bf.bf.bf ", formedKey
-    try:
-        producer_c3.send("scores"
-                         ,value = str(currScore).encode('utf-8')
-                         ,key = formedKey)
-        #print "Sent .af.af.af ",formedKey
-    except Exception as e:
-        print("Exception in Kafka producer in score sending: " + e.message)
-    finally:
-        producer_c3.close()
+    producer_c3.send("scores"
+                     , value="".encode('utf-8')
+                     , key="__init__".encode('utf-8'))
 
+
+    if mgfid is not None and fastaid is not None:
+        formedKey = mgfid+"#"+fastaid+"#"+str(timeReqd)
+        try:
+            producer_c3.send("scores"
+                             ,value = str(currScore).encode('utf-8')
+                             ,key = formedKey.encode('utf-8'))
+            producer_c3.flush()
+        except Exception as e:
+            print("Exception in Kafka producer in score sending: " + e.message)
+    else:
+        print("Sent all scores")
+        producer_c3.close()
 
 def readFromPairBuilder(scorer_id):
     print(scorer_id)
@@ -145,8 +146,9 @@ def readFromPairBuilder(scorer_id):
 
     for msg in consumer_c3:  #(mgfID, fastaID), load, time in ms
         if "__final__" in msg.key.decode('utf-8'):
-            print ("All received... Shutting down cassandra connection")
+            print ("All pairs created... Shutting down cassandra connection")
             cass_session.shutdown()
+            sendScores(None, None, None, None)
             sys.exit(0)
 
         if "__init__" not in msg.key.decode('utf-8'):
@@ -158,14 +160,9 @@ def readFromPairBuilder(scorer_id):
                 currScore = calculateScore()
                 st = "Final score of pair "+ str(temp)+ " is: "+ str(currScore)+ " at time "+str(dt.now())
                 print (st)
-
-                #f = open('output/output_results.txt', 'a')
-                #f.write('\n' + st)
-                #f.close()
             except Exception as e:
                 print ("Error occured in pair ", temp, "....Hence skipped\n", str(e))
 
-            #currScore = setVariables(pairdata,temp)
             temp+=1
             postTime = dt.now()
             sendScores(pairdata[0], pairdata[1], currScore, pairdata[3]+timedelta.total_seconds(postTime-preTime))
