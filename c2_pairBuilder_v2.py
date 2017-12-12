@@ -171,6 +171,7 @@ def readFromFastaDB(minval, maxval):
     cass_session = connectToDB()
     select_results = None
     global fastaSpectrumIDs
+    fastaSpectrumIDs = []
 
     #delete this and limit
     query = "SELECT spectrum_id,pep_mass,peptide_sequence FROM fasta.pep_spec" \
