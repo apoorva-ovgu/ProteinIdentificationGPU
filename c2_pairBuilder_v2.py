@@ -23,33 +23,14 @@ filter_maxPeaks = 50
 protonwt = 1.00728
 neutronwt= 1.00335
 
-def filldb(mgf_id, mgf_metadata, mgf_title, mgf_mass, mgf_charge,mgf_sequence):
-    session = connectToDB()
+def filldb(session,mgf_id, mgf_metadata, mgf_title, mgf_mass, mgf_charge,mgf_sequence):
+    session.set_keyspace("mgf")
     session.execute("""INSERT INTO mgf.exp_spectrum (id, allmeta, title, pepmass, charge, data) 
         VALUES (%s, %s, %s, %s ,%s, %s)""",
         (mgf_id,  mgf_metadata,  mgf_title, mgf_mass, mgf_charge, mgf_sequence)
     )
-    session.shutdown()
 
-def table_contents(toselect, table_name):
-    cass_session = connectToDB()
-    tempArray = []
-
-    query = "SELECT " + toselect + " FROM " + table_name + ";"
-    select_results = cass_session.execute(query)
-
-    if "*" not in toselect:
-        for row in select_results:
-            stringRes = str(eval("row." + toselect))
-            tempArray.append(stringRes)
-    else:
-        for row in select_results:
-            tempArray.append(row)
-    cass_session.shutdown()
-
-    return tempArray
-
-def createPairs(createForId, finalFlag):
+def createPairs(createForId, finalFlag, session):
     filter_pepmass = curr_mgf_pepmass/1000
     global protonwt
     global neutronwt
@@ -77,7 +58,7 @@ def createPairs(createForId, finalFlag):
                 m_dmh -= neutronwt
             min_threshold = m_dmh - (m_dmh / 10000) + 1.00769
             max_threshold = m_dmh + (m_dmh / 10000) + 1.00769
-            readFromFastaDB(min_threshold, max_threshold )
+            readFromFastaDB(min_threshold, max_threshold, session)
 
             lenVal = "len=" + str(len(fastaSpectrumIDs))
             keyVal = "val=" + str(createForId)
@@ -134,13 +115,11 @@ def sendPairs(pairsCreated, time, finalFlag):
             finally:
                 print ("Paired as ", couple)
 
-def storeMGF(mgfid, mgfContent):
+def storeMGF(mgfid, mgfContent, session):
     global curr_mgf_pepmass
     global curr_mgf_charge
-
     #toPrint = "Received spectrum for ID ", mgfid
     #print(toPrint)
-
     tmpArr = mgfContent.split("#")    #0:data 1:metadata
     #print tmpArr
     metadata = tmpArr[1].split("\n")
@@ -161,25 +140,23 @@ def storeMGF(mgfid, mgfContent):
             p = re.compile('(\d+)(\+)')
             m = p.match(charge)
             curr_mgf_charge = float(m.group(1))
-
     try:
-        filldb(uuid.UUID('{' + mgfid + '}'), tmpArr[1], title, curr_mgf_pepmass, charge,tmpArr[0])
+        filldb(session,uuid.UUID('{' + mgfid + '}'), tmpArr[1], title, curr_mgf_pepmass, charge,tmpArr[0])
     except Exception as e:
         print("Error filling exp_spectrum: " + str(e))
 
-def readFromFastaDB(minval, maxval):
-    cass_session = connectToDB()
+def readFromFastaDB(minval, maxval, session):
+    session.set_keyspace("fasta")
     select_results = None
     global fastaSpectrumIDs
     fastaSpectrumIDs = []
 
-    #delete this and limit
     query = "SELECT spectrum_id,pep_mass,peptide_sequence FROM fasta.pep_spec" \
             " WHERE pep_mass > "+str(minval)+" and pep_mass < "+str(maxval) +\
             " ALLOW FILTERING ;";
     print("fetching = "+query)
     try:
-        select_results = cass_session.execute(query)
+        select_results = session.execute(query)
     except Exception as e:
         print("Couldn't get queries becase:: "+str(e))
     if select_results is not None:
@@ -187,7 +164,6 @@ def readFromFastaDB(minval, maxval):
             stringId = str(eval("row.spectrum_id"))
             stringMass = str(eval("row.pep_mass"))
             fastaSpectrumIDs.append((stringId,stringMass))
-    cass_session.shutdown()
 
 def filter1(mgf_received):
     filter1_mgf = []
@@ -377,15 +353,12 @@ def postProcessMgf(message):
         fullspectrum = rawmetadata
     return fullspectrum
 
-def run_step2():
+def run_step2(session):
     consumer_c2 = KafkaConsumer('topic_mgf'
                                 ,bootstrap_servers=['localhost:9092']
                                 , group_id='apoorva-thesis')
-    session = connectToDB()
     session.execute("""TRUNCATE table mgf.exp_spectrum;  """)
     session.execute("""TRUNCATE table scores.psm;  """)
-    session.shutdown()
-
     #print("Going to read from fastadb")
     #readFromFastaDB()
 
@@ -393,24 +366,22 @@ def run_step2():
     for message in consumer_c2:
         if '__final__' in message.key.decode('utf-8'):
             print ("All pairs for input MGF sent!")
-
-            createPairs(None, True)
+            createPairs(None, True,None)
             sendPairs(None, None, True)
+            session.shutdown()
             #sys.exit(0)
-
         elif '__init__' not in message.key.decode('utf-8'):
             filteredMGFdata = postProcessMgf(message)
             fullMGFkey = message.key.decode('utf-8').split("#")
             preTime = dt.now()
-            storeMGF(fullMGFkey[0], filteredMGFdata)
-            pairsCreated = createPairs(fullMGFkey[0], False)
-
+            storeMGF(fullMGFkey[0], filteredMGFdata, session)
+            pairsCreated = createPairs(fullMGFkey[0], False, session)
             postTime = dt.now()
-
             if pairsCreated is not None:
                 sendPairs(pairsCreated, timedelta.total_seconds(postTime-preTime), False)  ### timedelta:  (days, seconds and microseconds)
         else:
             print ("Initializing.... send again")
 
-run_step2()
+session = connectToDB()
+run_step2(session)
 
