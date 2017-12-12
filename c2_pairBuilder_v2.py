@@ -82,8 +82,8 @@ def createPairs(createForId, finalFlag):
             lenVal = "len=" + str(len(fastaSpectrumIDs))
             keyVal = "val=" + str(createForId)
             producer_uidMatches.send("numofmatches"
-                                     , value=bytes(keyVal, encoding='utf-8')
-                                     , key=bytes(lenVal, encoding='utf-8'))
+                                     , value=keyVal.encode('utf-8')
+                                     , key=lenVal.encode('utf-8'))
             producer_uidMatches.flush()
 
             if len(fastaSpectrumIDs)==0:
@@ -116,8 +116,8 @@ def sendPairs(pairsCreated, time, finalFlag):
     else:
         for couple in pairsCreated:
             #loadBalancer += 1
-            if (loadBalancer > 8): #This what we change for scaling.
-                loadBalancer = 1
+            #if (loadBalancer > 8): #This what we change for scaling.
+             #   loadBalancer = 1
             loadBalancer = 1
             try:
                 couple = couple + (loadBalancer,) + (time,)
