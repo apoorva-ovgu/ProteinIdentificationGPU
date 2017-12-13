@@ -45,13 +45,14 @@ for file in os.listdir(mgf_location):
                         try:
                             generatedID+="#"+str(highest_intensity)
                             fullSpectra_s+="#"+metaData
-                            time.sleep(4)
+                            
                             producer.send("topic_mgf"
                                           , value = fullSpectra_s.encode('utf-8')
                                           , key = generatedID.encode('utf-8'))
                         except Exception as e:
                             print("Leider exception in Kafka producer: " + str(e))
                         print("Sent spectra: " + generatedID+ "at "+str(dt.now()))
+                        time.sleep(40)
                         fullSpectra_s = ""
                         metaData = ""
 
