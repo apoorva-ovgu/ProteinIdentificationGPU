@@ -6,6 +6,7 @@ import cProfile
 #import cStringIO
 import pstats
 from datetime import timedelta, datetime as dt
+import time
 
 #Profile block 1
 profile = False
@@ -44,6 +45,7 @@ for file in os.listdir(mgf_location):
                         try:
                             generatedID+="#"+str(highest_intensity)
                             fullSpectra_s+="#"+metaData
+                            time.sleep(4)
                             producer.send("topic_mgf"
                                           , value = fullSpectra_s.encode('utf-8')
                                           , key = generatedID.encode('utf-8'))
