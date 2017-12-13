@@ -1,7 +1,7 @@
 from cassandra.cluster import Cluster
 
 def connectToDB():
-    cluster = Cluster(['127.0.0.1'])
+    cluster = Cluster(['192.168.145.20','192.168.145.21','192.168.145.22'])
     session = cluster.connect()
     #session.set_keyspace('xtandem')
     session.default_timeout = None
