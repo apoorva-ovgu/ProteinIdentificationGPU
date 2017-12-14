@@ -39,7 +39,7 @@ def collect(scoreLine,mgfDict,timeDict):
                      )
         mgfClassInstances.append(mgfClassObj)
         #print("----", str(mgfClassInstances))
-        storeScores(lookFor, receivedScoreFor[1], receivedScore)
+        #commented for tests # storeScores(lookFor, receivedScoreFor[1], receivedScore)
         if int(mgfDict[receivedScoreFor[0]]) == 0:
                 max_time = sortScores(receivedScoreFor[0])
                 #print("***", str(max_time))
@@ -50,7 +50,7 @@ def collect(scoreLine,mgfDict,timeDict):
 
                 toprint ="\n"+str(lookFor)+"end-to-end time from collector (use last for total time plot 1) "+ str(c)+ ", wait time (for wt plot 2) "+str(float(c)-float(max_time))+", max_service_time (use all of them for service time plot 3) "+str(max_time)+"\n"
                 print(toprint)
-                f = open('output/big_scorer8_run1.txt', 'a')
+                f = open('output/big_scorer2_testrun1.txt', 'a')
                 f.write(toprint)
                 f.close()
         #else:
@@ -66,7 +66,7 @@ def sortScores(mgfid):
     tmpArr = []
     toPrint = "\nAll results collected for "+str( mgfid)+ " and the Sorting order is:"
     print (toPrint)
-    f = open('output/big_scorer8_run1.txt', 'a')
+    f = open('output/big_scorer2_testrun1.txt', 'a')
     f.write(toPrint)
     f.close()
 
@@ -87,7 +87,7 @@ def sortScores(mgfid):
                   +" ...and computing time (do not use these numbers)="+str(eachItem.timeReqd)
 
         print (toPrint)
-        f = open('output/big_scorer8_run1.txt', 'a')
+        f = open('output/big_scorer2_testrun1.txt', 'a')
         f.write(toPrint)
         f.close()
 
@@ -127,7 +127,7 @@ def getuidMetadata(mgfDict,timeDict):
 
             mgfDict[val2] = int(key2)
             timeDict[val2] = dt.now()
-            f = open('output/big_scorer8_run1.txt', 'a')
+            f = open('output/big_scorer2_testrun1.txt', 'a')
             f.write(toPrint)
             f.close()
 
