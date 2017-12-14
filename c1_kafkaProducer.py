@@ -2,19 +2,8 @@ from kafka import KafkaProducer
 import uuid
 import re
 import os
-import cProfile
-#import cStringIO
-import pstats
 from datetime import timedelta, datetime as dt
 import time
-
-#Profile block 1
-profile = False
-
-if profile:
-    pr = cProfile.Profile()
-    pr.enable()
-#End of Profile block 1
 
 mgf_location = os.path.join(os.path.dirname(__file__), 'datafiles')
 mgfSpectrumIDs = []
@@ -45,17 +34,16 @@ for file in os.listdir(mgf_location):
                         try:
                             generatedID+="#"+str(highest_intensity)
                             fullSpectra_s+="#"+metaData
-                            
+                            time.sleep(22)
                             producer.send("topic_mgf"
                                           , value = fullSpectra_s.encode('utf-8')
                                           , key = generatedID.encode('utf-8'))
+                            print("Sent spectra: " + generatedID + "at " + str(dt.now()))
+                            time.sleep(22)
                         except Exception as e:
                             print("Leider exception in Kafka producer: " + str(e))
-                        print("Sent spectra: " + generatedID+ "at "+str(dt.now()))
-                        time.sleep(40)
                         fullSpectra_s = ""
                         metaData = ""
-
 
                     elif m is not None and "=" not in line:
                         currmz = float(m.group(1))
@@ -72,6 +60,7 @@ for file in os.listdir(mgf_location):
 producer.send("topic_mgf"
             , value = "coded by apoorva".encode('utf-8')
             , key = "__final__".encode('utf-8'))
+print("Sent all MGF spectra!")
 producer.flush()
-producer.close()
+#producer.close()
 

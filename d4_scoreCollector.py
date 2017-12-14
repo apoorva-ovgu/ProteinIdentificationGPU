@@ -38,19 +38,16 @@ def collect(scoreLine,mgfDict,timeDict):
                      ,receivedScoreFor[2] #timeRequired
                      )
         mgfClassInstances.append(mgfClassObj)
-        #print("----", str(mgfClassInstances))
-        #commented for tests # storeScores(lookFor, receivedScoreFor[1], receivedScore)
+        storeScores(lookFor, receivedScoreFor[1], receivedScore)
         if int(mgfDict[receivedScoreFor[0]]) == 0:
                 max_time = sortScores(receivedScoreFor[0])
-                #print("***", str(max_time))
                 a = dt.now()
-                #print("b is ",timeDict[lookFor]," of type ",type(timeDict[lookFor]))
                 b = timeDict[lookFor]
                 c = timedelta.total_seconds(a - b)
 
                 toprint ="\n"+str(lookFor)+"end-to-end time from collector (use last for total time plot 1) "+ str(c)+ ", wait time (for wt plot 2) "+str(float(c)-float(max_time))+", max_service_time (use all of them for service time plot 3) "+str(max_time)+"\n"
                 print(toprint)
-                f = open('output/big_scorer2_testrun1.txt', 'a')
+                f = open('output/big_scorer8_run1.txt', 'a')
                 f.write(toprint)
                 f.close()
         #else:
@@ -66,7 +63,7 @@ def sortScores(mgfid):
     tmpArr = []
     toPrint = "\nAll results collected for "+str( mgfid)+ " and the Sorting order is:"
     print (toPrint)
-    f = open('output/big_scorer2_testrun1.txt', 'a')
+    f = open('output/big_scorer8_run1.txt', 'a')
     f.write(toPrint)
     f.close()
 
@@ -87,7 +84,7 @@ def sortScores(mgfid):
                   +" ...and computing time (do not use these numbers)="+str(eachItem.timeReqd)
 
         print (toPrint)
-        f = open('output/big_scorer2_testrun1.txt', 'a')
+        f = open('output/big_scorer8_run1.txt', 'a')
         f.write(toPrint)
         f.close()
 
@@ -97,13 +94,16 @@ def sortScores(mgfid):
     return max_time
 
 def getScores(mgfDict,timeDict):
-    consumer_scores = KafkaConsumer("scores"
+    try:
+        consumer_scores = KafkaConsumer("scores"
                                      ,bootstrap_servers=["localhost:9092"]
                                      )
-    print ("Ready to collect scores!")
-    for msg in consumer_scores:
-        if "__init__" not in msg.key.decode('utf-8'):
-            collect(msg, mgfDict,timeDict)
+        print ("Ready to collect scores!")
+        for msg in consumer_scores:
+            if "__init__" not in msg.key.decode('utf-8'):
+                collect(msg, mgfDict,timeDict)
+    except Exception as e:
+        print("Caught an exception in Kafka consumer: " + str(e))
 
 def getuidMetadata(mgfDict,timeDict):
     try:
@@ -112,31 +112,31 @@ def getuidMetadata(mgfDict,timeDict):
 
                                             )
         consumer_uidMatches.subscribe("numofmatches")
+
+        print("Ready to consume numofmatches")
+        for msg in consumer_uidMatches:
+            key1 = msg.key.decode('utf-8')
+            val1 = msg.value.decode('utf-8')
+            if "__final__" not in key1 and "__init__" not in key1:
+                key2 = key1.split("=")[1]
+                val2 = val1.split("=")[1]
+                toPrint = "%s has %s matches!\n" % (val2,key2)
+                print (toPrint)
+
+                mgfDict[val2] = int(key2)
+                timeDict[val2] = dt.now()
+                f = open('output/big_scorer8_run1.txt', 'a')
+                f.write(toPrint)
+                f.close()
     except Exception as e:
-        print("Exception in Kafka consumer in numofmatches Collector: " + e.message)
-    print("Ready to consume numofmatches")
-    for msg in consumer_uidMatches:
-        #print(str(msg))
-        key1 = msg.key.decode('utf-8')
-        val1 = msg.value.decode('utf-8')
-        if "__final__" not in key1 and "__init__" not in key1:
-            key2 = key1.split("=")[1]
-            val2 = val1.split("=")[1]
-            toPrint = "%s has %s matches!\n" % (val2,key2)
-            print (toPrint)
-
-            mgfDict[val2] = int(key2)
-            timeDict[val2] = dt.now()
-            f = open('output/big_scorer2_testrun1.txt', 'a')
-            f.write(toPrint)
-            f.close()
-
+        print("Exception in Kafka consumer in numofmatches Collector and its processing: " + e.message)
 def sendResults(producer_d4, keyToSend, valueToSend):
-    producer_d4.send("results"
+    try:
+        producer_d4.send("results"
                   ,value = valueToSend.encode('utf-8')
                   , key = keyToSend.encode('utf-8'))
-
-
+    except Exception as e:
+        print("Caught an exception in Kafka producer: " + str(e))
 
 mgfClassInstances = []
 mgfDict = {}

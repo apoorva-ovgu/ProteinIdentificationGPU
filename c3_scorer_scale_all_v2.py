@@ -71,13 +71,6 @@ def loadRealData(mgfid, fastaid):
             m_pfSeq.append(1)
 
 
-    #f = open('output/output_results.txt', 'a')
-    #f.write('\n' + "m_plSeq=" + str(m_plSeq))
-    #f.write('\n' + "m_pfSeq=" +str(m_pfSeq))
-    #f.write('\n' + "m_lM=" +str(m_lM))
-    #f.write('\n' + "m_fI=" +str(m_fI))
-    #f.close()
-
 def calculateScore():
     global m_lM
     global m_fI
@@ -116,11 +109,13 @@ def calculateScore():
 
 def sendScores(mgfid, fastaid, currScore, timeReqd):
     producer_c3 = KafkaProducer(bootstrap_servers=['localhost: 9092'])
-    producer_c3.send("scores"
+    try:
+        producer_c3.send("scores"
                      , value="".encode('utf-8')
                      , key="__init__".encode('utf-8'))
 
-
+    except Exception as e:
+        print("Caught an exception in Kafka producer: " + str(e))
     if mgfid is not None and fastaid is not None:
         formedKey = mgfid+"#"+fastaid+"#"+str(timeReqd)
         try:
@@ -136,10 +131,13 @@ def sendScores(mgfid, fastaid, currScore, timeReqd):
 
 def readFromPairBuilder(scorer_id):
     print(scorer_id)
-    consumer_c3 = KafkaConsumer("pairs"+str(scorer_id)
+    try:
+        consumer_c3 = KafkaConsumer("pairs"+str(scorer_id)
                                 , bootstrap_servers=['localhost:9092']
                                 , group_id='apoorva-thesis')
-    print("Consumer is ready to listen!")
+        print("Consumer is ready to listen!")
+    except Exception as e:
+        print("Caught an exception in Kafka consumer: " + str(e))
     temp = 1
     currScore = -1
     prof_ctr = 10
