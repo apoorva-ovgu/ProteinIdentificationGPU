@@ -6,3 +6,5 @@ class mgfClass:
         self.score = float(score)
         self.remainingComparisons = remainingComparisons
         self.timeReqd = timeReqd
+
+        #print("Instance for ",name, " created. FASTA=",match," Score= ",score)

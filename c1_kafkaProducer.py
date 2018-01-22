@@ -2,8 +2,20 @@ from kafka import KafkaProducer
 import uuid
 import re
 import os
-from datetime import timedelta, datetime as dt
+import cProfile
 import time
+#import cStringIO
+import pstats
+from datetime import timedelta, datetime as dt
+
+#Profile block 1
+profile = False
+pairbuilders = 4
+
+if profile:
+    pr = cProfile.Profile()
+    pr.enable()
+#End of Profile block 1
 
 mgf_location = os.path.join(os.path.dirname(__file__), 'datafiles')
 mgfSpectrumIDs = []
@@ -13,13 +25,19 @@ p = re.compile('(\d+\.*\d*)[ \t](\d+\.*\d*)')
 generatedID = ""
 metaData = ""
 mz_threshold = 150
-
 producer = KafkaProducer(bootstrap_servers=['localhost: 9092'])
-producer.send("topic_mgf"
-                , value = b'code by apoorva patrikar'
-                , key = b'__init__')
+try:
+    for i in range(1,pairbuilders+1):
+        producer.send("topic_mgf"+str(i)
+                    , value = b'code by apoorva patrikar'
+                    , key = b'__init__')
+except Exception as e:
+    print("Exception: " + e.message)
 
+loadBalancer = 0
+f = open('output/d4 graph.txt', 'a')
 for file in os.listdir(mgf_location):
+        counter = 0
         if file.endswith(".mgf"):
             highest_intensity = 0
             for line in open(mgf_location + "/" + file, 'U'):
@@ -34,16 +52,28 @@ for file in os.listdir(mgf_location):
                         try:
                             generatedID+="#"+str(highest_intensity)
                             fullSpectra_s+="#"+metaData
-                            time.sleep(22)
-                            producer.send("topic_mgf"
+                            loadBalancer+=1
+                            if (loadBalancer> pairbuilders):
+                                loadBalancer = 1
+                            producer.send("topic_mgf"+str(loadBalancer)
                                           , value = fullSpectra_s.encode('utf-8')
-                                          , key = generatedID.encode('utf-8'))
-                            print("Sent spectra: " + generatedID + "at " + str(dt.now()))
-                            time.sleep(22)
+                                          , key = str(dt.now())+"_the_real_separator_"+generatedID.encode('utf-8'))
+                            print("Sent to topic: topic_mgf"+str(loadBalancer))
+                            #counter+=1
+                            #if counter>4:
+                            #    time.sleep(40)
+                            #    counter=0
                         except Exception as e:
                             print("Leider exception in Kafka producer: " + str(e))
+                        toprint = "["+str(dt.now())+"] Produced spectra: " + generatedID+"\n"
+                        print(toprint)
+                        f = open('output/d4 results.txt', 'a')
+                        f.write(toprint)
+                        f.close()
+
                         fullSpectra_s = ""
                         metaData = ""
+
 
                     elif m is not None and "=" not in line:
                         currmz = float(m.group(1))
@@ -57,10 +87,15 @@ for file in os.listdir(mgf_location):
                     elif "=" in line:
                             metaData+=line+"\n"
 
-producer.send("topic_mgf"
-            , value = "coded by apoorva".encode('utf-8')
-            , key = "__final__".encode('utf-8'))
-print("Sent all MGF spectra!")
+for i in range(1,pairbuilders+1):
+    try:
+        producer.send("topic_mgf"+str(i)
+                , value = "coded by apoorva".encode('utf-8')
+                , key = "__final__".encode('utf-8'))
+        print("Sent final message to topic_mgf"+str(i))
+    except Exception as e:
+        print("Exception: " + e.message)
+f.close()
 producer.flush()
-#producer.close()
+producer.close()
 
